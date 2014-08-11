@@ -1,2 +1,4 @@
 SpaceInvaders
 =============
+
+For this project, I designed and built an embedded system for the 80's arcade game, called Space Invaders. This was the final project (optional) of Massive open online course (MOOC) titled "UT.6.01x Embedded Systems - Shape the World". This MOOC was offered by University of Texas at Austin on edx.org and was taught by Dr. Jonathan Valvano and Dr. Ramesh Yerraballi. The course was completeled on May 22nd, 2014; however, all the course material, including lecture videos, quizzes, and labs, were archived on the edx website and I used the archived material to go through the entore course. This project had a requirements documemt (provided by the course professors) and I have inculded that document in the file titled [RequriementsDocument.md](https://raw.githubusercontent.com/tjqadri101/SpaceInvaders/master/RequriementsDocument.md).
