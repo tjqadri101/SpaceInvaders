@@ -68,9 +68,9 @@
 // SSI0Clk       (SCLK, pin 7) connected to PA2
 // back light    (LED, pin 8) not connected, consists of 4 white LEDs which draw ~80mA total
 
-#include "..//tm4c123gh6pm.h"
+#include "tm4c123gh6pm.h"
 #include "Nokia5110.h"
-#include "Random.h"
+#include "random.h"
 #include "TExaS.h"
 
 void DisableInterrupts(void); // Disable interrupts
