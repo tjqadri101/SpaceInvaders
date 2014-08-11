@@ -9,6 +9,7 @@
 #include "DAC.h"
 #include "Timer0.h"
 #include "Sound.h"
+#include "tm4c123gh6pm.h"
 
 const unsigned char shoot[4080] = {
   129, 99, 103, 164, 214, 129, 31, 105, 204, 118, 55, 92, 140, 225, 152, 61, 84, 154, 184, 101, 
@@ -1141,22 +1142,22 @@ const unsigned char highpitch[1802] = {
 
 unsigned long Index = 0;
 const unsigned char *Wave;
-unsigned long Count = 0;
+unsigned long SoundCount = 0;
 void Play(void){
-  if(Count){
+  if(SoundCount){
     DAC_Out(Wave[Index]>>4);
     Index = Index + 1;
-    Count = Count - 1;
+    SoundCount = SoundCount - 1;
   }else{
   NVIC_DIS0_R = 1<<19;           // disable IRQ 19 in NVIC
   }
 }
 void Sound_Init(void){
-  DAC_Init(8);               // initialize simple 4-bit DAC
+  DAC_Init();               // initialize simple 4-bit DAC
 //  Timer0B_Init(&Play, 20000); // 4 kHz
   Timer0_Init(&Play, 80000000/11025);     // 11.025 kHz
   Index = 0;
-  Count = 0;
+  SoundCount = 0;
 //   while(1){
 //     DAC_Out(2048);
 //   }
@@ -1164,7 +1165,7 @@ void Sound_Init(void){
 void Sound_Play(const unsigned char *pt, unsigned long count){
   Wave = pt;
   Index = 0;
-  Count = count;
+  SoundCount = count;
   NVIC_EN0_R = 1<<19;           // 9) enable IRQ 19 in NVIC
   TIMER0_CTL_R = 0x00000001;    // 10) enable TIMER0A
 }
