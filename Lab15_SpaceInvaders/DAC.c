@@ -14,9 +14,13 @@
 // Input: none
 // Output: none
 void DAC_Init(void){
-	unsigned long volatile delay;
+	/*unsigned long volatile delay;
   SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOB; // activate port B
-  delay = SYSCTL_RCGC2_R;    // allow time to finish activating
+  delay = SYSCTL_RCGC2_R;    // allow time to finish activating*/
+	
+	//This function must be called after SwitchLed_Init function from SwitchLed.c
+	//The clock for PortB is activated in SwitchLed_Init; hence it does not need to be activated here
+	
   GPIO_PORTB_AMSEL_R &= ~0x0F;      // no analog function for PB3-0
   GPIO_PORTB_PCTL_R &= ~0x0000FFFF; // regular function for PB3-0
   GPIO_PORTB_DIR_R |= 0x0F;      // make PB3-0 out

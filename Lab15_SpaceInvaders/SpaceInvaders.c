@@ -64,41 +64,71 @@
 // SSI0Clk       (SCLK, pin 7) connected to PA2
 // back light    (LED, pin 8) not connected, consists of 4 white LEDs which draw ~80mA total
 
+// ***** 1. Pre-processor Directives Section *****
 #include "tm4c123gh6pm.h"
 #include "Nokia5110.h"
-#include "random.h"
-#include "Sprites.h"
+#include "Random.h"
+#include "SwitchLed.h"
 #include "Sound.h"
+#include "GameEngine.h"
 #include "TExaS.h"
 
+#define PF1   (*((volatile unsigned long *)0x40025008))
+// ***** 2. Global Declarations Section *****
+
+//Global variables
+unsigned long TimerCount;
+unsigned long Semaphore = 0;
+
+// FUNCTION PROTOTYPES: Each subroutine defined
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
 void Timer2_Init(unsigned long period);
 void Delay100ms(unsigned long count); // time delay in 0.1 seconds
-unsigned long TimerCount;
-unsigned long Semaphore;
+void PF1Init(void); //Initialize PF1 (PF1) for debugging the SysTick interrupts
+void SysTick_Init(unsigned long period); // Initialize SysTick interrupts
+// ***** 3. Subroutines Section *****
+
+void PF1Init(void){
+	volatile unsigned long  delay;
+	SYSCTL_RCGC2_R |= 0x00000020;     // 1) activate clock for Port F
+  delay = SYSCTL_RCGC2_R;           // allow time for clock to start
+  GPIO_PORTF_AMSEL_R &= ~0x02;        // 3) disable analog on PF1
+  GPIO_PORTF_PCTL_R &= ~0x000000F0;   // 4) PCTL GPIO on PF1
+  GPIO_PORTF_DIR_R |= 0x02;          // 5) PF1 out
+  GPIO_PORTF_AFSEL_R &= ~0x02;        // 6) disable alt funct on PF7-0
+  GPIO_PORTF_DEN_R |= 0x02;          // 7) enable digital I/O on PF1
+}
+
+void SysTick_Init(unsigned long period){
+	NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
+  NVIC_ST_RELOAD_R = period-1;// reload value
+  NVIC_ST_CURRENT_R = 0;      // any write to current clears it
+  NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x20000000; // priority 1      
+  NVIC_ST_CTRL_R = 0x0007;  // enable SysTick with core clock and interrupts
+}
+void SysTick_Handler(void){  // runs at 30 Hz
+	PF1 ^= 0x02;     // toggle PF1, debugging
+	Player_Move();
+  Enemy_Move();  
+  Semaphore = 1;
+}
+
+
 
 
 int main(void){
+	DisableInterrupts();
   TExaS_Init(SSI0_Real_Nokia5110_Scope);  // set system clock to 80 MHz
   Random_Init(1);
   Nokia5110_Init();
+	PF1Init();
+	SysTick_Init(2666666); //Initialize SysTick with 30 Hz interrupts
   Nokia5110_ClearBuffer();
 	Nokia5110_DisplayBuffer();      // draw buffer
-
-  Nokia5110_PrintBMP(32, 47, PlayerShip0, 0); // player ship middle bottom
-  Nokia5110_PrintBMP(33, 47 - PLAYERH, Bunker0, 0);
-
-  Nokia5110_PrintBMP(0, ENEMY10H - 1, SmallEnemy10PointA, 0);
-  Nokia5110_PrintBMP(16, ENEMY10H - 1, SmallEnemy20PointA, 0);
-  Nokia5110_PrintBMP(32, ENEMY10H - 1, SmallEnemy20PointA, 0);
-  Nokia5110_PrintBMP(48, ENEMY10H - 1, SmallEnemy30PointA, 0);
-  Nokia5110_PrintBMP(64, ENEMY10H - 1, SmallEnemy30PointA, 0);
-  Nokia5110_DisplayBuffer();     // draw buffer
-
-  Delay100ms(50);              // delay 5 sec at 50 MHz
-
-
+	Game_Init();
+	EnableInterrupts();
+  /*Delay100ms(50);              // delay 5 sec at 80 MHz
   Nokia5110_Clear();
   Nokia5110_SetCursor(1, 1);
   Nokia5110_OutString("GAME OVER");
@@ -107,8 +137,11 @@ int main(void){
   Nokia5110_SetCursor(1, 3);
   Nokia5110_OutString("Earthling!");
   Nokia5110_SetCursor(2, 4);
-  Nokia5110_OutUDec(1234);
+  Nokia5110_OutUDec(1234);*/
   while(1){
+		while(Semaphore==0){};
+    Draw_Frame(); // update the LCD
+    Semaphore = 0;
   }
 
 }
@@ -141,7 +174,7 @@ void Timer2A_Handler(void){
 }
 void Delay100ms(unsigned long count){unsigned long volatile time;
   while(count>0){
-    time = 727240;  // 0.1sec at 80 MHz
+    time = 742742;  // 0.1sec at 80 MHz
     while(time){
 	  	time--;
     }

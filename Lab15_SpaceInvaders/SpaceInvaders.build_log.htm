@@ -8,27 +8,48 @@ Project File Date:  08/11/2014
 
 <h2>Output:</h2>
 Build target 'SpaceInvaders'
+compiling SpaceInvaders.c...
+compiling SwitchLed.c...
 linking...
-Program Size: Code=4012 RO-data=5284 RW-data=68 ZI-data=1684  
+Program Size: Code=4436 RO-data=4804 RW-data=80 ZI-data=2088  
 ".\SpaceInvaders.axf" - 0 Error(s), 0 Warning(s).
-
-Sound.c: 1 warning, 0 errors
+s
+compiling DAC.c...
+compiling SwitchLed.c...
+SwitchLed.h(29): warning:  #1-D: last line of file ends without a newline
+  unsigned char Switch_SpecialFire(void);
+SwitchLed.c(70): warning:  #1-D: last line of file ends without a newline
+  }
+SwitchLed.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=4012 RO-data=5284 RW-data=68 ZI-data=1684  
-".\SpaceInvaders.axf" - 0 Error(s), 1 Warning(s).
-: Symbol explosion multiply defined (by sound.o and spaceinvaders.o).
-.\SpaceInvaders.axf: Error: L6200E: Symbol fastinvader1 multiply defined (by sound.o and spaceinvaders.o).
-.\SpaceInvaders.axf: Error: L6200E: Symbol fastinvader2 multiply defined (by sound.o and spaceinvaders.o).
-.\SpaceInvaders.axf: Error: L6200E: Symbol fastinvader3 multiply defined (by sound.o and spaceinvaders.o).
-.\SpaceInvaders.axf: Error: L6200E: Symbol fastinvader4 multiply defined (by sound.o and spaceinvaders.o).
-.\SpaceInvaders.axf: Error: L6200E: Symbol highpitch multiply defined (by sound.o and spaceinvaders.o).
+Program Size: Code=4436 RO-data=4804 RW-data=80 ZI-data=2088  
+".\SpaceInvaders.axf" - 0 Error(s), 3 Warning(s).
+lEnemy10PointA multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol SmallEnemy10PointB multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol PlayerShip0 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol SmallEnemyBonus0 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Bunker0 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Bunker1 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Bunker2 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Bunker3 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol BigExplosion0 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol BigExplosion1 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol SmallExplosion0 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol SmallExplosion1 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Missile0 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Missile1 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Missile2 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Laser0 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Laser1 multiply defined (by gameengine.o and spaceinvaders.o).
 Not enough information to list image symbols.
 Not enough information to list the image map.
-Finished: 2 information, 0 warning and 8 error messages.
-".\SpaceInvaders.axf" - 8 Error(s), 0 Warning(s).
+Finished: 2 information, 0 warning and 21 error messages.
+".\SpaceInvaders.axf" - 21 Error(s), 0 Warning(s).
 Target not created
-age symbols.
+mbol Laser0 multiply defined (by gameengine.o and spaceinvaders.o).
+.\SpaceInvaders.axf: Error: L6200E: Symbol Laser1 multiply defined (by gameengine.o and spaceinvaders.o).
+Not enough information to list image symbols.
 Not enough information to list the image map.
-Finished: 2 information, 0 warning and 8 error messages.
-".\SpaceInvaders.axf" - 8 Error(s), 1 Warning(s).
+Finished: 2 information, 0 warning and 21 error messages.
+".\SpaceInvaders.axf" - 21 Error(s), 3 Warning(s).
 Target not created
