@@ -20,3 +20,6 @@ I (DAC.h)(0x53E1093E)
 I (Timer0.h)(0x532B3862)
 I (Sound.h)(0x5346A4BA)
 I (tm4c123gh6pm.h)(0x51D4A8F2)
+F (.\ADC.c)(0x53E88357)(-c --cpu Cortex-M4 -D__RTX -D__EVAL -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\..-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_LM4F120H5QR-o .\adc.o --omf_browse .\adc.crf --depend .\adc.d)
+I (ADC.h)(0x53444DFA)
+I (tm4c123gh6pm.h)(0x51D4A8F2)
