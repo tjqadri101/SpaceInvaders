@@ -1,10 +1,16 @@
 #Requirements Document
 ##1. Overview
   1.1. Objectives: Why are we doing this project? What is the purpose? The overall objective of this project is to integrate the individual components taught in this class into a single system. More specifically, the objectives of this project are: 1) design, test, and debug a large C program; 2) to review I/O interfacing techniques used in this class; and 3) to design a system that performs a useful task.  In particular we will design an 80’s-style shoot-em up game like Space Invaders.
+
   1.2. Process: How will the project be developed? Similar to the labs, this project will have a starter project, Lab15_SpaceInvaders, which will include some art and sounds to get you started.
+
   1.3. Roles and Responsibilities: Who will do what?  Who are the clients? Students may develop their games individually or in teams. An effective team size for this project ranges from 1 to 3 members. There is no upper limit to team size, but above 3 members will present difficulty in communication and decision making. The clients for this project will be other classmates and your professors of the UT.6.01x course.
+
+ 
   1.4. Interactions with Existing Systems: How will it fit in? The game must be developed in C on the Keil IDE and run on a Stellaris/Tiva LaunchPad. We expect you to combine your solutions to Lab 8 (switches, LED), Lab 12 (interrupts), Lab 13 (DAC and sounds), and Lab 14 (slide pot and ADC) into one system. We expect everyone to use the slide pot, two switches, two LEDs, one 4-bit DAC, and the Nokia5110 LCD screen. If you do not own a Nokia5110 there will be a mechanism to pass the Nokia graphic commands to the PC and the application TExaSdisplay will show the images in real time as your game software runs on your real LaunchPad.
+
   1.5. Terminology: Define terms used in the document. BMP is a simple file format to store graphical images. A sprite is a virtual entity that is created, moves around the screen, and might disappear. A public function is one that can be called by another module. For example, since the main program is allowed to call Sound_Play, Sound_Play is a public function.
+
   1.6. Security: How will intellectual property be managed? Since this project does not contribute to the final grade in UT.6.01x you do not need to upload your solution. If you do upload your source code, then other students who have uploaded will be able to see and download your source code. To reduce the chance of spreading viruses, we will restrict the upload to a single text-formatted source code file. More specifically, the upload must be a SpaceInvaders.c file, and this file must compile within a project like the Lab15_SpaceInvaders starter project within the 32k-limit of the free version of the Keil IDE.
 
 ##2. Function Description
