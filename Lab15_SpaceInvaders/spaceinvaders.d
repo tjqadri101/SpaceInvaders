@@ -3,5 +3,6 @@
 .\spaceinvaders.o: Nokia5110.h
 .\spaceinvaders.o: Random.h
 .\spaceinvaders.o: SwitchLed.h
+.\spaceinvaders.o: Sound.h
 .\spaceinvaders.o: GameEngine.h
 .\spaceinvaders.o: TExaS.h

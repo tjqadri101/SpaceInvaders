@@ -7,7 +7,7 @@
 
 
 void Sound_Init(void);
-void Sound_Play(const unsigned char *pt, unsigned long count);
+void Sound_Play(void);
 void Sound_Shoot(void);
 void Sound_Killed(void);
 void Sound_Explosion(void);

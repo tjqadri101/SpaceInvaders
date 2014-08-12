@@ -9,7 +9,8 @@
 #include "DAC.h"
 #include "tm4c123gh6pm.h"
 
-// **************DAC_Init*********************
+#define PB3_0 (*((volatile unsigned long *)0x4000503C)) //access only Port B bits 3-0
+
 // Initialize 4-bit DAC 
 // Input: none
 // Output: none
@@ -30,10 +31,11 @@ void DAC_Init(void){
 }
 
 
-// **************DAC_Out*********************
+
 // output to DAC
 // Input: 4-bit data, 0 to 15 
 // Output: none
 void DAC_Out(unsigned long data){
-  GPIO_PORTB_DATA_R = data;
+  //GPIO_PORTB_DATA_R = data;
+  PB3_0 = data;
 }

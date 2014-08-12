@@ -62,7 +62,7 @@ http://users.ece.utexas.edu/~valvano/
 #include "Nokia5110.h"
 #include "Random.h"
 #include "SwitchLed.h"
-//#include "Sound.h"
+#include "Sound.h"
 #include "GameEngine.h"
 #include "TExaS.h"
 
@@ -74,17 +74,16 @@ unsigned char TimerCount;
 unsigned char Semaphore = 0;
 unsigned long SuccessLedCount;
 unsigned long FailureLedCount;
-//unsigned long PrevRegFire = 0;
-//unsigned long PrevSpecFire = 0;
 
 // FUNCTION PROTOTYPES: Each subroutine defined
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
-void Timer2_Init(unsigned long period);
+void Timer2_Init(void(*task)(void), unsigned long period);
 void Delay100ms(unsigned long count); // time delay in 0.1 seconds
 void PF1Init(void); //Initialize PF1 (PF1) for debugging the SysTick interrupts
 //void SwitchLed_Init(void);// Initialize switch inputs and LED outputs
 void SysTick_Init(unsigned long period); // Initialize SysTick interrupts
+void (*PeriodicTask)(void);   // user function for Timer2A
 // ***** 3. Subroutines Section *****
 
 void PF1Init(void){
@@ -97,83 +96,6 @@ void PF1Init(void){
   GPIO_PORTF_AFSEL_R &= ~0x02;        // 6) disable alt funct on PF7-0
   GPIO_PORTF_DEN_R |= 0x02;          // 7) enable digital I/O on PF1
 }
-
-
-// Initialize switch inputs and LED outputs
-// Input: none
-// Output: none
-//void SwitchLed_Init(void){ 
-  //volatile unsigned long  delay;
-	//Clock for Port E already activated in ADC_Init which is called before this function in main
-  /*SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOE;     // 1) activate clock for Port E
-  delay = SYSCTL_RCGC2_R;           // allow time for clock to start	*/
-/*	GPIO_PORTE_AMSEL_R &= ~0x03; // 3) disable analog function on PE1-0
-  GPIO_PORTE_PCTL_R &= ~0x000000FF; // 4) enable regular GPIO on PE1-0
-  GPIO_PORTE_DIR_R &= ~0x03;   // 5) inputs on PE1-0
-  GPIO_PORTE_AFSEL_R &= ~0x03; // 6) regular function on PE1-0
-  GPIO_PORTE_DEN_R |= 0x03;    // 7) enable digital on PE1-0
-	
-	SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOB; // activate port B
-  delay = SYSCTL_RCGC2_R;    // allow time to finish activating
-  GPIO_PORTB_AMSEL_R &= ~0x30;      // no analog function for PB5-4
-  GPIO_PORTB_PCTL_R &= ~0x00FF0000; // regular function for PB5-4
-  GPIO_PORTB_DIR_R |= 0x30;      // make PB5-4 in
-  GPIO_PORTB_AFSEL_R &= ~0x30;   // disable alt funct on PB5-4
-  GPIO_PORTB_DEN_R |= 0x30;      // enable digital I/O on PB5-4
-}
-
-// Input from fire button (PE0)
-// Input: none 
-// Output: 0 or 1 depending on whether button was just pressed (positive logic)
-unsigned char Switch_Fire(void){
-	 unsigned char FireBool;
-   if((GPIO_PORTE_DATA_R&0x01) && (PrevRegFire == 0)){ // just pressed
-		 FireBool = 1;
-	 }
-	 else{
-			FireBool = 0;
-	 }
-	 PrevRegFire = GPIO_PORTE_DATA_R&0x01;
-	 return FireBool;
-}
-
-
-// Input from special weapons button (PE1)
-// Input: none 
-// Output: 0 or 1 depending on whether button was just pressed (positive logic)
-unsigned char Switch_SpecialFire(void){
-		unsigned char SpecFireBool;
-   if((GPIO_PORTE_DATA_R&0x02) && (PrevSpecFire == 0)){ // just pressed
-		 SpecFireBool = 1;
-	 }
-	 else{
-		 SpecFireBool = 0;
-	 }
-	 PrevSpecFire = GPIO_PORTE_DATA_R&0x02;
-	 return SpecFireBool;
-}
-
-
-//Turns on Led connected to PB4 when something positive happens e.g. enemy hit, game won etc.
-void Success_LedOn(void){
-	GPIO_PORTB_DATA_R |= 0x10;
-}
-
-//Turns on Led connected to PB5 when something negative happens e.g. player hit, bunker hit, game lost etc.
-void Failure_LedOn(void){
-	GPIO_PORTB_DATA_R |= 0x20;
-}
-
-//Turns off Led connected to PB4 
-void Success_LedOff(void){
-	GPIO_PORTB_DATA_R &= ~0x10;
-}
-
-//Turns off Led connected to PB5 
-void Failure_LedOff(void){
-	GPIO_PORTB_DATA_R &= ~0x20;
-	
-}*/
 
 void SysTick_Init(unsigned long period){
 	NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
@@ -188,11 +110,13 @@ void SysTick_Handler(void){  // runs at 30 Hz
   Enemy_Move();  
 	if(Switch_Fire()){
 		Success_LedOn();
-		SuccessLedCount = 1000;
+		SuccessLedCount = 20000; //.18s
+		Sound_Shoot();
 	}
 	if(Switch_SpecialFire()){
 		Failure_LedOn();
-		FailureLedCount = 1000;
+		FailureLedCount = 20000;//.18s
+		Sound_Shoot();
 	}
   Semaphore = 1;
 }
@@ -206,11 +130,12 @@ int main(void){
   Nokia5110_Init();
 	PF1Init();
   SysTick_Init(2666666); //Initialize SysTick with 30 Hz interrupts
-	Timer2_Init(7256); //11.025 kHz. 80,000,000/11,025 cycles, which is about 7256
   Nokia5110_ClearBuffer();
 	Nokia5110_DisplayBuffer();      // draw buffer
 	Game_Init();
 	SwitchLed_Init();
+	Sound_Init();
+	Timer2_Init(&Sound_Play,7256); //11.025 kHz. 80,000,000/11,025 cycles, which is about 7256
 	EnableInterrupts();
 	
   while(1){
@@ -222,13 +147,16 @@ int main(void){
 }
 
 
-// You can use this timer only if you learn how it works
-void Timer2_Init(unsigned long period){ 
+// ***************** Timer2_Init **************** (This method was written by Jonathan Valvano)
+// Activate Timer2 interrupts to run user task periodically
+// Inputs:  task is a pointer to a user function
+//          period in units (1/clockfreq)
+// Outputs: none
+void Timer2_Init(void(*task)(void), unsigned long period){
   unsigned long volatile delay;
   SYSCTL_RCGCTIMER_R |= 0x04;   // 0) activate timer2
   delay = SYSCTL_RCGCTIMER_R;
-  TimerCount = 0;
-  Semaphore = 0;
+  PeriodicTask = task;          // user function
   TIMER2_CTL_R = 0x00000000;    // 1) disable timer2A during setup
   TIMER2_CFG_R = 0x00000000;    // 2) configure for 32-bit mode
   TIMER2_TAMR_R = 0x00000002;   // 3) configure for periodic mode, default down-count settings
@@ -242,8 +170,9 @@ void Timer2_Init(unsigned long period){
   NVIC_EN0_R = 1<<23;           // 9) enable IRQ 23 in NVIC
   TIMER2_CTL_R = 0x00000001;    // 10) enable timer2A
 }
-void Timer2A_Handler(void){ 
-  TIMER2_ICR_R = 0x00000001;   // acknowledge timer2A timeout
+
+void Timer2A_Handler(void){
+   TIMER2_ICR_R = 0x00000001;   // acknowledge timer2A timeout
 	if(SuccessLedCount){
 		SuccessLedCount--;
 	}
@@ -257,8 +186,9 @@ void Timer2A_Handler(void){
 	else if(FailureLedCount == 0){
 			Failure_LedOff();
 	}
-
+  (*PeriodicTask)();                // execute user task
 }
+
 void Delay100ms(unsigned long count){unsigned long volatile time;
   while(count>0){
     time = 727240;  // 0.1sec at 80 MHz
