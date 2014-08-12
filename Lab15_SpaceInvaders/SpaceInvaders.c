@@ -60,9 +60,9 @@ http://users.ece.utexas.edu/~valvano/
 // ***** 1. Pre-processor Directives Section *****
 #include "tm4c123gh6pm.h"
 #include "Nokia5110.h"
-#include "Random.h"
 #include "SwitchLed.h"
 #include "Sound.h"
+#include "Random.h"
 #include "GameEngine.h"
 #include "TExaS.h"
 
@@ -90,7 +90,7 @@ void (*PeriodicTask)(void);   // user function for Timer2A
 int main(void){
 	DisableInterrupts();
   TExaS_Init(SSI0_Real_Nokia5110_Scope);  // set system clock to 80 MHz
-  Random_Init(1);
+	Random_Init(1);
   Nokia5110_Init();
 	PF1Init();
   SysTick_Init(2666666); //Initialize SysTick with 30 Hz interrupts

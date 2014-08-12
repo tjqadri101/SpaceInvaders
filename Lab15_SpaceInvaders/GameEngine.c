@@ -5,23 +5,29 @@
 #include "Nokia5110.h"
 #include "Sprites.h"
 #include "ADC.h"
+#include "Sound.h"
+#include "SwitchLed.h"
+#include "Random.h"
 
 #define MAX_REG_MISSILES 4
 #define MAX_SPEC_MISSILES 2
 #define MAX_LASERS 5
 
-unsigned long FrameCount=0;
+unsigned long FrameCount=0; //to anmate enemies while they move
 unsigned long Distance; // units 0.001 cm
 unsigned long ADCdata;  // 12-bit 0 to 4095 sample
-unsigned char RegMissileCount = 0;
-unsigned char SpecMissileCount = 0;
-unsigned char SpecMissileDecrementCheck = 0;
-unsigned char LaserCount = 0;
+unsigned long Score; //game score
+unsigned char RegMissileCount = 0; //number of active RMTyp on screen
+unsigned char SpecMissileCount = 0; //number of active SLTyp on screen
+unsigned char SpecMissileDecrementCheck = 0; //if 1 decrement the SpecMissileCount
+unsigned char LaserCount = 0; //number of active ELTyp on screen
+unsigned char EnemyCount = 0;//number of alive ETyp (enemies on screen)
+unsigned char LaserDelay = 0; //used to create a delay between firing of successive lasers
+
 
 struct GameObject {
   unsigned long x;      // x coordinate
   unsigned long y;      // y coordinate
-  unsigned char colid; // 0 = not collided, 1= collided
   unsigned char life;  // 0=dead, greater than 0 = alive
 };         
 typedef struct GameObject GTyp;
@@ -103,24 +109,31 @@ unsigned long ConvertToDistance(unsigned long sample){
 																	//For 3cm long 10 kohm potentiometer, method returns a number betweem 0 and 3000
 }
 
+//Return a random number, the upper limit is 1 less than the current number of alive enemies on screen with a maximum enemy count of 12
+//This method is used to access an enemy at random and launch a laser from its position
+//It is also used to create a random value for LaserDelay
+unsigned long RandomGenerator(unsigned long enemies){
+  return ((Random()>>22)%enemies);  
+}
+
 void Game_Init(void){ 
-	int i, j;
+	unsigned char i, j;
 	ADC0_Init();
+	Score = 0;
+	LaserDelay = RandomGenerator(4)+1;
 	Player.GObj.x = 32;
 	Player.GObj.y = 47;
 	Player.image = PlayerShip0;
 	Player.GObj.life = 1;
-  Player.GObj.colid = 0;
 	
 	for(j=0;j<2;j++){
 		Bunkers[j].GObj.x = (83-BUNKERW)*j;
     Bunkers[j].GObj.y = 47 - PLAYERH;
-    Bunkers[j].image[0] = Bunker0;
-    Bunkers[j].image[1] = Bunker1;
-		Bunkers[i].image[2] = Bunker2;
-		Bunkers[i].image[3] = Bunker3;
+    Bunkers[j].image[0] = Bunker3;
+    Bunkers[j].image[1] = Bunker2;
+		Bunkers[j].image[2] = Bunker1;
+		Bunkers[j].image[3] = Bunker0;
     Bunkers[j].GObj.life = 3;
-		Bunkers[j].GObj.colid = 0;
 	}
 	
   for(i=0;i<12;i++){
@@ -145,15 +158,41 @@ void Game_Init(void){
 			Enemy[i].image[1] = SmallEnemy10PointB;
 			Enemy[i].GObj.life = 1;
 		}
-		Enemy[i].GObj.colid = 0;
+		EnemyCount++;
    }
 }
+
+//Fire laser from an enemy if the number of lasers on screen is less than 5
+//Enemies chosen at random from the existing alive enemies
+//This method called within LaserMove() method which is called every SysTick interrupt via Move_ActiveObjects() method
+//If LaserDelay is not 0, it decrements LaserDelay and returns
+//hence, a delay equal to period of 1 Systick Interrupt (1/30Hz) times initialized value of LaserDelay is created between successive laser fires
+//LaserDelay is always initialized as a random number between 1 and 5
+void EnemyLaserFire(void){unsigned long index;
+	if(LaserDelay){
+		LaserDelay--;
+		return;
+	}
+	LaserDelay = RandomGenerator(4)+1;
+	index = RandomGenerator(11); //Random number between 0 and 11
+	if(Enemy[index].GObj.life && (LaserCount < MAX_LASERS)){
+		//Lasers are 2 pixels wide
+		//Enemies are 16 pixels wide
+		Lasers[LaserCount].GObj.x = Enemy[index].GObj.x + 6; //set bottom left of laser at the center pixel along x axis of the enemy
+		Lasers[LaserCount].GObj.y = Enemy[index].GObj.y;
+		Lasers[LaserCount].GObj.life = 1;
+		Lasers[LaserCount].image = Laser0;
+		Lasers[LaserCount].yspeed = 2;
+		LaserCount++;
+		Sound_InvaderShoot();
+	}
+}
+
 void RegMissile_Fire(void){
 	if(RegMissileCount < MAX_REG_MISSILES){
 			RegMissiles[RegMissileCount].GObj.x = Player.GObj.x + 7; //Player 18 pixels, laser 2 pixels wide
 																																//adding 7 makes laser image start at 8th pixel of player, making laser appear from player's center
 			RegMissiles[RegMissileCount].GObj.y = 47 - PLAYERH;
-			RegMissiles[RegMissileCount].GObj.colid = 0;
 			RegMissiles[RegMissileCount].GObj.life = 1;
 			RegMissiles[RegMissileCount].image = Laser0;
 			RegMissiles[RegMissileCount].yspeed = 2;
@@ -167,11 +206,9 @@ void SpecMissile_Fire(void){
 																																//adding 6 makes missile image start at 8th pixel of player
 																																// making missile appear from player's center
 			SpecMissiles[SpecMissileCount].GObj1.y = 47 - PLAYERH;
-			SpecMissiles[SpecMissileCount].GObj1.colid = 0;
 			SpecMissiles[SpecMissileCount].GObj1.life = 1;
 			SpecMissiles[SpecMissileCount].GObj2.x = Player.GObj.x + 6; 
 			SpecMissiles[SpecMissileCount].GObj2.y = 47 - PLAYERH;
-			SpecMissiles[SpecMissileCount].GObj2.colid = 0;
 			SpecMissiles[SpecMissileCount].GObj2.life = 1;
 			//Missile0 will rise upwards and also move to the right
 			//Missile1 will rise upwards and also move to the left
@@ -253,11 +290,27 @@ void SpecMissileMove(void){
 	}
 }
 
+void LaserMove(void){unsigned char i;
+	for(i = 0; i < MAX_LASERS; i++){
+		if(Lasers[i].GObj.life){
+			if(Lasers[i].GObj.y >= (47)){
+				Lasers[i].GObj.life = 0;
+				LaserCount--;	
+			}
+			else{
+				Lasers[i].GObj.y += Lasers[i].yspeed; 
+			}
+		}
+	}
+	EnemyLaserFire(); //create new laser if possible
+}
+
 void Move_ActiveObjects(void){
 	PlayerMove();
 	EnemyMove();
 	RegMissileMove();
 	SpecMissileMove();
+	LaserMove();
 }
 
 void DrawPlayer(void){
@@ -266,7 +319,7 @@ void DrawPlayer(void){
 
 void DrawBunkers(void){unsigned char j;
 	for(j=0;j<2;j++){
-		Nokia5110_PrintBMP(Bunkers[j].GObj.x, Bunkers[j].GObj.y, Bunkers[j].image[0], 0); 
+		Nokia5110_PrintBMP(Bunkers[j].GObj.x, Bunkers[j].GObj.y, Bunkers[j].image[Bunkers[j].GObj.life], 0); 
 	}
 }
 
@@ -299,6 +352,14 @@ void DrawSpecMissiles(void){unsigned char i;
 	
 }
 
+void DrawLasers(void){unsigned char i;
+	for(i=0;i<MAX_LASERS;i++){
+    if(Lasers[i].GObj.life){
+     Nokia5110_PrintBMP(Lasers[i].GObj.x, Lasers[i].GObj.y, Lasers[i].image, 0);
+		}
+  }
+}
+
 void Draw_Frame(void){
   Nokia5110_ClearBuffer();
 	DrawPlayer();
@@ -306,6 +367,7 @@ void Draw_Frame(void){
   DrawEnemies();
 	DrawRegMissiles();
 	DrawSpecMissiles();
+	DrawLasers();
   Nokia5110_DisplayBuffer();      // draw buffer
   FrameCount = (FrameCount+1)&0x01; // 0,1,0,1,...
 }

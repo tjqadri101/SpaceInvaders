@@ -48,18 +48,6 @@ void Sound_Killed(void){
 void Sound_Explosion(void){
   SoundOut(explosion,2000);
 }
-void Sound_Fastinvader1(void){
-  SoundOut(fastinvader1,982);
-}
-void Sound_Fastinvader2(void){
-  SoundOut(fastinvader2,1042);
-}
-void Sound_Fastinvader3(void){
-  SoundOut(fastinvader3,1054);
-}
-void Sound_Fastinvader4(void){
-  SoundOut(fastinvader4,1098);
-}
-void Sound_Highpitch(void){
-  SoundOut(highpitch,1802);
+void Sound_InvaderShoot(void){
+  SoundOut(invadershoot,1802);
 }
