@@ -84,44 +84,8 @@ void PF1Init(void); //Initialize PF1 (PF1) for debugging the SysTick interrupts
 //void SwitchLed_Init(void);// Initialize switch inputs and LED outputs
 void SysTick_Init(unsigned long period); // Initialize SysTick interrupts
 void (*PeriodicTask)(void);   // user function for Timer2A
+
 // ***** 3. Subroutines Section *****
-
-void PF1Init(void){
-	volatile unsigned long  delay;
-	SYSCTL_RCGC2_R |= 0x00000020;     // 1) activate clock for Port F
-  delay = SYSCTL_RCGC2_R;           // allow time for clock to start
-  GPIO_PORTF_AMSEL_R &= ~0x02;        // 3) disable analog on PF1
-  GPIO_PORTF_PCTL_R &= ~0x000000F0;   // 4) PCTL GPIO on PF1
-  GPIO_PORTF_DIR_R |= 0x02;          // 5) PF1 out
-  GPIO_PORTF_AFSEL_R &= ~0x02;        // 6) disable alt funct on PF7-0
-  GPIO_PORTF_DEN_R |= 0x02;          // 7) enable digital I/O on PF1
-}
-
-void SysTick_Init(unsigned long period){
-	NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
-  NVIC_ST_RELOAD_R = period-1;// reload value
-  NVIC_ST_CURRENT_R = 0;      // any write to current clears it
-  NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x20000000; // priority 1      
-  NVIC_ST_CTRL_R = 0x0007;  // enable SysTick with core clock and interrupts
-}
-void SysTick_Handler(void){  // runs at 30 Hz
-	GPIO_PORTF_DATA_R ^= 0x02;     // toggle PF1, debugging
-	Player_Move();
-  Enemy_Move();  
-	if(Switch_Fire()){
-		Success_LedOn();
-		SuccessLedCount = 20000; //.18s
-		Sound_Shoot();
-	}
-	if(Switch_SpecialFire()){
-		Failure_LedOn();
-		FailureLedCount = 20000;//.18s
-		Sound_Shoot();
-	}
-  Semaphore = 1;
-}
-
-
 
 int main(void){
 	DisableInterrupts();
@@ -144,6 +108,42 @@ int main(void){
     Semaphore = 0;
   }
 
+}
+
+void PF1Init(void){
+	volatile unsigned long  delay;
+	SYSCTL_RCGC2_R |= 0x00000020;     // 1) activate clock for Port F
+  delay = SYSCTL_RCGC2_R;           // allow time for clock to start
+  GPIO_PORTF_AMSEL_R &= ~0x02;        // 3) disable analog on PF1
+  GPIO_PORTF_PCTL_R &= ~0x000000F0;   // 4) PCTL GPIO on PF1
+  GPIO_PORTF_DIR_R |= 0x02;          // 5) PF1 out
+  GPIO_PORTF_AFSEL_R &= ~0x02;        // 6) disable alt funct on PF7-0
+  GPIO_PORTF_DEN_R |= 0x02;          // 7) enable digital I/O on PF1
+}
+
+void SysTick_Init(unsigned long period){
+	NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
+  NVIC_ST_RELOAD_R = period-1;// reload value
+  NVIC_ST_CURRENT_R = 0;      // any write to current clears it
+  NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x20000000; // priority 1      
+  NVIC_ST_CTRL_R = 0x0007;  // enable SysTick with core clock and interrupts
+}
+void SysTick_Handler(void){  // runs at 30 Hz
+	GPIO_PORTF_DATA_R ^= 0x02;     // toggle PF1, debugging
+	Move_ActiveObjects();  
+	if(Switch_Fire()){
+		Success_LedOn();
+		SuccessLedCount = 10000; //.09s
+		RegMissile_Fire();
+		Sound_Shoot();
+	}
+	if(Switch_SpecialFire()){
+		Failure_LedOn();
+		FailureLedCount = 10000;//.09s
+		SpecMissile_Fire();
+		Sound_Shoot();
+	}
+  Semaphore = 1;
 }
 
 
