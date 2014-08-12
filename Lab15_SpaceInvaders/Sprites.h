@@ -245,3 +245,7 @@ const unsigned char Laser1[] = {
 #define MISSILEH    ((unsigned char)Missile0[22])
 #define PLAYERW     ((unsigned char)PlayerShip0[18])
 #define PLAYERH     ((unsigned char)PlayerShip0[22])
+
+	
+
+	

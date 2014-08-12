@@ -41,7 +41,7 @@ PTyp Player;
 BTyp Bunkers[2];
 ETyp Enemy[12];
 
-//********ConvertToDistance****************
+
 // Convert a 12-bit binary ADC sample into a 32-bit unsigned
 // fixed-point distance (resolution 0.001 cm).  Calibration
 // data is gathered using known distances and reading the
@@ -136,3 +136,14 @@ void Draw_Frame(void){ int i, j;
   Nokia5110_DisplayBuffer();      // draw buffer
   FrameCount = (FrameCount+1)&0x01; // 0,1,0,1,...
 }
+
+  /*Delay100ms(50);              // delay 5 sec at 80 MHz
+  Nokia5110_Clear();
+  Nokia5110_SetCursor(1, 1);
+  Nokia5110_OutString("GAME OVER");
+  Nokia5110_SetCursor(1, 2);
+  Nokia5110_OutString("Nice try,");
+  Nokia5110_SetCursor(1, 3);
+  Nokia5110_OutString("Earthling!");
+  Nokia5110_SetCursor(2, 4);
+  Nokia5110_OutUDec(1234);*/

@@ -1,4 +1,4 @@
-// Talal Javed Qadri
+//Talal Javed Qadri
 //August 11, 2014
 
 // Port E bits 1-0 are inputs
@@ -9,35 +9,36 @@
 // LED on PB4
 // LED on PB5
 
-#include "SwitchLed.h"
 #include "tm4c123gh6pm.h"
+#include "SwitchLed.h"
 
 unsigned long PrevRegFire = 0;
 unsigned long PrevSpecFire = 0;
 
-// **************SwitchLed_Init*********************
-// Initialize piano key inputs
+
+// Initialize switch inputs and LED outputs
 // Input: none
 // Output: none
 void SwitchLed_Init(void){ 
   volatile unsigned long  delay;
-  SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOE;     // 1) activate clock for Port E
-  delay = SYSCTL_RCGC2_R;           // allow time for clock to start	
+	//Clock for Port E already activated in ADC_Init which is called before this function in main
+  /*SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOE;     // 1) activate clock for Port E
+  delay = SYSCTL_RCGC2_R;           // allow time for clock to start	*/
 	GPIO_PORTE_AMSEL_R &= ~0x03; // 3) disable analog function on PE1-0
   GPIO_PORTE_PCTL_R &= ~0x000000FF; // 4) enable regular GPIO on PE1-0
-  GPIO_PORTE_DIR_R &= ~0x03;   // 5) inputs on PE3-0
-  GPIO_PORTE_AFSEL_R &= ~0x03; // 6) regular function on PE3-0
-  GPIO_PORTE_DEN_R |= 0x03;    // 7) enable digital on PE3-0
+  GPIO_PORTE_DIR_R &= ~0x03;   // 5) inputs on PE1-0
+  GPIO_PORTE_AFSEL_R &= ~0x03; // 6) regular function on PE1-0
+  GPIO_PORTE_DEN_R |= 0x03;    // 7) enable digital on PE1-0
 	
 	SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOB; // activate port B
   delay = SYSCTL_RCGC2_R;    // allow time to finish activating
   GPIO_PORTB_AMSEL_R &= ~0x30;      // no analog function for PB5-4
   GPIO_PORTB_PCTL_R &= ~0x00FF0000; // regular function for PB5-4
-  GPIO_PORTB_DIR_R &= ~0x30;      // make PB5-4 in
+  GPIO_PORTB_DIR_R |= 0x30;      // make PB5-4 in
   GPIO_PORTB_AFSEL_R &= ~0x30;   // disable alt funct on PB5-4
   GPIO_PORTB_DEN_R |= 0x30;      // enable digital I/O on PB5-4
 }
-// **************Switch_Fire*********************
+
 // Input from fire button (PE0)
 // Input: none 
 // Output: 0 or 1 depending on whether button was just pressed (positive logic)
@@ -47,18 +48,18 @@ unsigned char Switch_Fire(void){
 		 FireBool = 1;
 	 }
 	 else{
-		 FireBool = 0;
+			FireBool = 0;
 	 }
 	 PrevRegFire = GPIO_PORTE_DATA_R&0x01;
 	 return FireBool;
 }
 
-// **************Switch_SpecialFire*********************
+
 // Input from special weapons button (PE1)
 // Input: none 
 // Output: 0 or 1 depending on whether button was just pressed (positive logic)
 unsigned char Switch_SpecialFire(void){
-	unsigned char SpecFireBool;
+		unsigned char SpecFireBool;
    if((GPIO_PORTE_DATA_R&0x02) && (PrevSpecFire == 0)){ // just pressed
 		 SpecFireBool = 1;
 	 }
@@ -67,4 +68,26 @@ unsigned char Switch_SpecialFire(void){
 	 }
 	 PrevSpecFire = GPIO_PORTE_DATA_R&0x02;
 	 return SpecFireBool;
+}
+
+
+//Turns on Led connected to PB4 when something positive happens e.g. enemy hit, game won etc.
+void Success_LedOn(void){
+	GPIO_PORTB_DATA_R |= 0x10;
+}
+
+//Turns on Led connected to PB5 when something negative happens e.g. player hit, bunker hit, game lost etc.
+void Failure_LedOn(void){
+	GPIO_PORTB_DATA_R |= 0x20;
+}
+
+//Turns off Led connected to PB4 
+void Success_LedOff(void){
+	GPIO_PORTB_DATA_R &= ~0x10;
+}
+
+//Turns off Led connected to PB5 
+void Failure_LedOff(void){
+	GPIO_PORTB_DATA_R &= ~0x20;
+	
 }

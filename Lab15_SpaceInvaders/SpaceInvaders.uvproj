@@ -431,9 +431,34 @@
               <FilePath>.\TExaS.c</FilePath>
             </File>
             <File>
+              <FileName>DAC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\DAC.c</FilePath>
+            </File>
+            <File>
+              <FileName>Timer0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Timer0.c</FilePath>
+            </File>
+            <File>
               <FileName>Sound.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Sound.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>GameEngine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\GameEngine.c</FilePath>
+            </File>
+            <File>
+              <FileName>SwitchLed.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SwitchLed.c</FilePath>
             </File>
           </Files>
         </Group>

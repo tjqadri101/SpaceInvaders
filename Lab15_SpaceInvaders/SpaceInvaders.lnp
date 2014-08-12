@@ -4,10 +4,8 @@
 ".\random.o"
 ".\spaceinvaders.o"
 ".\texas.o"
-".\dac.o"
-".\timer0.o"
-".\sound.o"
 ".\adc.o"
+".\dac.o"
 ".\gameengine.o"
 ".\switchled.o"
 C:\Keil\ARM\RV31\LIB\RTX_CM3.LIB
