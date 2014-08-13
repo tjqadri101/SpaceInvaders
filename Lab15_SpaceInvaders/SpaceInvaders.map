@@ -180,9 +180,8 @@ Section Cross References
     gameengine.o(i.State_GameOver) refers to nokia5110.o(i.Nokia5110_Clear) for Nokia5110_Clear
     gameengine.o(i.State_GameOver) refers to nokia5110.o(i.Nokia5110_SetCursor) for Nokia5110_SetCursor
     gameengine.o(i.State_GameOver) refers to nokia5110.o(i.Nokia5110_OutString) for Nokia5110_OutString
-    gameengine.o(i.State_GameOver) refers to gameengine.o(i.Check_GameOver) for Check_GameOver
     gameengine.o(i.State_GameOver) refers to nokia5110.o(i.Nokia5110_OutUDec) for Nokia5110_OutUDec
-    gameengine.o(i.State_GameOver) refers to gameengine.o(.data) for Score
+    gameengine.o(i.State_GameOver) refers to gameengine.o(.data) for KilledEnemyCount
     switchled.o(i.Failure_LedCount) refers to switchled.o(.data) for FailureLedCount
     switchled.o(i.Failure_LedOn) refers to switchled.o(.data) for FailureLedCount
     switchled.o(i.Success_LedCount) refers to switchled.o(.data) for SuccessLedCount
@@ -497,29 +496,29 @@ Image Symbol Table
     i.SpecMissileMove                        0x00001f30   Section        0  gameengine.o(i.SpecMissileMove)
     i.SpecMissile_Fire                       0x00002104   Section        0  gameengine.o(i.SpecMissile_Fire)
     i.State_GameOver                         0x00002238   Section        0  gameengine.o(i.State_GameOver)
-    i.Success_LedCount                       0x00002308   Section        0  switchled.o(i.Success_LedCount)
-    i.Success_LedOff                         0x00002324   Section        0  switchled.o(i.Success_LedOff)
-    i.Success_LedOn                          0x0000233c   Section        0  switchled.o(i.Success_LedOn)
-    i.SwitchLed_Init                         0x0000235c   Section        0  switchled.o(i.SwitchLed_Init)
-    i.Switch_Fire                            0x00002418   Section        0  switchled.o(i.Switch_Fire)
-    i.Switch_SpecialFire                     0x00002444   Section        0  switchled.o(i.Switch_SpecialFire)
-    i.SysTick_Handler                        0x00002470   Section        0  spaceinvaders.o(i.SysTick_Handler)
-    i.SysTick_Init                           0x000024e4   Section        0  spaceinvaders.o(i.SysTick_Init)
-    i.TExaS_Init                             0x00002514   Section        0  texas.o(i.TExaS_Init)
-    i.Timer2A_Handler                        0x000026d8   Section        0  spaceinvaders.o(i.Timer2A_Handler)
-    i.Timer2_Init                            0x00002708   Section        0  spaceinvaders.o(i.Timer2_Init)
-    i.Timer4A_Handler                        0x00002770   Section        0  texas.o(i.Timer4A_Handler)
-    i.Timer5A_Handler                        0x00002790   Section        0  texas.o(i.Timer5A_Handler)
-    i.UART0_Init                             0x000027c0   Section        0  texas.o(i.UART0_Init)
-    i.lcdwrite                               0x00002880   Section        0  nokia5110.o(i.lcdwrite)
-    lcdwrite                                 0x00002881   Thumb Code    66  nokia5110.o(i.lcdwrite)
-    i.main                                   0x000028cc   Section        0  spaceinvaders.o(i.main)
-    .constdata                               0x0000296c   Section      480  nokia5110.o(.constdata)
-    ASCII                                    0x0000296c   Data         480  nokia5110.o(.constdata)
-    .constdata                               0x00002b4c   Section      360  texas.o(.constdata)
-    .constdata                               0x00002cb4   Section     4411  gameengine.o(.constdata)
-    ASCII                                    0x00002cb4   Data         480  gameengine.o(.constdata)
-    .constdata                               0x00003def   Section    10439  sound.o(.constdata)
+    i.Success_LedCount                       0x00002310   Section        0  switchled.o(i.Success_LedCount)
+    i.Success_LedOff                         0x0000232c   Section        0  switchled.o(i.Success_LedOff)
+    i.Success_LedOn                          0x00002344   Section        0  switchled.o(i.Success_LedOn)
+    i.SwitchLed_Init                         0x00002364   Section        0  switchled.o(i.SwitchLed_Init)
+    i.Switch_Fire                            0x00002420   Section        0  switchled.o(i.Switch_Fire)
+    i.Switch_SpecialFire                     0x0000244c   Section        0  switchled.o(i.Switch_SpecialFire)
+    i.SysTick_Handler                        0x00002478   Section        0  spaceinvaders.o(i.SysTick_Handler)
+    i.SysTick_Init                           0x000024ec   Section        0  spaceinvaders.o(i.SysTick_Init)
+    i.TExaS_Init                             0x0000251c   Section        0  texas.o(i.TExaS_Init)
+    i.Timer2A_Handler                        0x000026e0   Section        0  spaceinvaders.o(i.Timer2A_Handler)
+    i.Timer2_Init                            0x00002710   Section        0  spaceinvaders.o(i.Timer2_Init)
+    i.Timer4A_Handler                        0x00002778   Section        0  texas.o(i.Timer4A_Handler)
+    i.Timer5A_Handler                        0x00002798   Section        0  texas.o(i.Timer5A_Handler)
+    i.UART0_Init                             0x000027c8   Section        0  texas.o(i.UART0_Init)
+    i.lcdwrite                               0x00002888   Section        0  nokia5110.o(i.lcdwrite)
+    lcdwrite                                 0x00002889   Thumb Code    66  nokia5110.o(i.lcdwrite)
+    i.main                                   0x000028d4   Section        0  spaceinvaders.o(i.main)
+    .constdata                               0x00002974   Section      480  nokia5110.o(.constdata)
+    ASCII                                    0x00002974   Data         480  nokia5110.o(.constdata)
+    .constdata                               0x00002b54   Section      360  texas.o(.constdata)
+    .constdata                               0x00002cbc   Section     4411  gameengine.o(.constdata)
+    ASCII                                    0x00002cbc   Data         480  gameengine.o(.constdata)
+    .constdata                               0x00003df7   Section    10439  sound.o(.constdata)
     .data                                    0x20000000   Section        8  spaceinvaders.o(.data)
     .data                                    0x20000008   Section       52  texas.o(.data)
     .data                                    0x2000003c   Section       22  gameengine.o(.data)
@@ -815,58 +814,58 @@ Image Symbol Table
     Sound_Shoot                              0x00001f1d   Thumb Code    14  sound.o(i.Sound_Shoot)
     SpecMissileMove                          0x00001f31   Thumb Code   446  gameengine.o(i.SpecMissileMove)
     SpecMissile_Fire                         0x00002105   Thumb Code   282  gameengine.o(i.SpecMissile_Fire)
-    State_GameOver                           0x00002239   Thumb Code   124  gameengine.o(i.State_GameOver)
-    Success_LedCount                         0x00002309   Thumb Code    22  switchled.o(i.Success_LedCount)
-    Success_LedOff                           0x00002325   Thumb Code    16  switchled.o(i.Success_LedOff)
-    Success_LedOn                            0x0000233d   Thumb Code    20  switchled.o(i.Success_LedOn)
-    SwitchLed_Init                           0x0000235d   Thumb Code   156  switchled.o(i.SwitchLed_Init)
-    Switch_Fire                              0x00002419   Thumb Code    36  switchled.o(i.Switch_Fire)
-    Switch_SpecialFire                       0x00002445   Thumb Code    36  switchled.o(i.Switch_SpecialFire)
-    SysTick_Handler                          0x00002471   Thumb Code   100  spaceinvaders.o(i.SysTick_Handler)
-    SysTick_Init                             0x000024e5   Thumb Code    42  spaceinvaders.o(i.SysTick_Init)
-    TExaS_Init                               0x00002515   Thumb Code   324  texas.o(i.TExaS_Init)
-    Timer2A_Handler                          0x000026d9   Thumb Code    40  spaceinvaders.o(i.Timer2A_Handler)
-    Timer2_Init                              0x00002709   Thumb Code    84  spaceinvaders.o(i.Timer2_Init)
-    Timer4A_Handler                          0x00002771   Thumb Code    20  texas.o(i.Timer4A_Handler)
-    Timer5A_Handler                          0x00002791   Thumb Code    34  texas.o(i.Timer5A_Handler)
-    UART0_Init                               0x000027c1   Thumb Code   160  texas.o(i.UART0_Init)
-    main                                     0x000028cd   Thumb Code   142  spaceinvaders.o(i.main)
-    NoInputMsg                               0x00002b4c   Data          40  texas.o(.constdata)
-    OutputPortMsg0                           0x00002b74   Data          40  texas.o(.constdata)
-    OutputPortMsg1                           0x00002b9c   Data          40  texas.o(.constdata)
-    OutputPortMsg2                           0x00002bc4   Data          40  texas.o(.constdata)
-    OutputPortMsg3                           0x00002bec   Data          40  texas.o(.constdata)
-    BlankMsg                                 0x00002c14   Data          40  texas.o(.constdata)
-    InitializedMsg                           0x00002c3c   Data          40  texas.o(.constdata)
-    IntroMsg                                 0x00002c64   Data          40  texas.o(.constdata)
-    DoneMsg                                  0x00002c8c   Data          40  texas.o(.constdata)
-    SmallEnemy30PointA                       0x00002e94   Data         199  gameengine.o(.constdata)
-    SmallEnemy30PointB                       0x00002f5b   Data         199  gameengine.o(.constdata)
-    SmallEnemy20PointA                       0x00003022   Data         199  gameengine.o(.constdata)
-    SmallEnemy20PointB                       0x000030e9   Data         199  gameengine.o(.constdata)
-    SmallEnemy10PointA                       0x000031b0   Data         199  gameengine.o(.constdata)
-    SmallEnemy10PointB                       0x00003277   Data         199  gameengine.o(.constdata)
-    PlayerShip0                              0x0000333e   Data         215  gameengine.o(.constdata)
-    SmallEnemyBonus0                         0x00003415   Data         203  gameengine.o(.constdata)
-    Bunker0                                  0x000034e0   Data         179  gameengine.o(.constdata)
-    Bunker1                                  0x00003593   Data         179  gameengine.o(.constdata)
-    Bunker2                                  0x00003646   Data         179  gameengine.o(.constdata)
-    Bunker3                                  0x000036f9   Data         179  gameengine.o(.constdata)
-    BigExplosion0                            0x000037ac   Data         215  gameengine.o(.constdata)
-    BigExplosion1                            0x00003883   Data         215  gameengine.o(.constdata)
-    SmallExplosion0                          0x0000395a   Data         199  gameengine.o(.constdata)
-    SmallExplosion1                          0x00003a21   Data         199  gameengine.o(.constdata)
-    Missile0                                 0x00003ae8   Data         155  gameengine.o(.constdata)
-    Missile1                                 0x00003b83   Data         155  gameengine.o(.constdata)
-    Missile2                                 0x00003c1e   Data         155  gameengine.o(.constdata)
-    Laser0                                   0x00003cb9   Data         155  gameengine.o(.constdata)
-    Laser1                                   0x00003d54   Data         155  gameengine.o(.constdata)
-    shoot                                    0x00003def   Data        4080  sound.o(.constdata)
-    invaderkilled                            0x00004ddf   Data        3377  sound.o(.constdata)
-    explosion                                0x00005b10   Data        2000  sound.o(.constdata)
-    invadershoot                             0x000062e0   Data         982  sound.o(.constdata)
-    Region$$Table$$Base                      0x000066b8   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x000066d8   Number         0  anon$$obj.o(Region$$Table)
+    State_GameOver                           0x00002239   Thumb Code   126  gameengine.o(i.State_GameOver)
+    Success_LedCount                         0x00002311   Thumb Code    22  switchled.o(i.Success_LedCount)
+    Success_LedOff                           0x0000232d   Thumb Code    16  switchled.o(i.Success_LedOff)
+    Success_LedOn                            0x00002345   Thumb Code    20  switchled.o(i.Success_LedOn)
+    SwitchLed_Init                           0x00002365   Thumb Code   156  switchled.o(i.SwitchLed_Init)
+    Switch_Fire                              0x00002421   Thumb Code    36  switchled.o(i.Switch_Fire)
+    Switch_SpecialFire                       0x0000244d   Thumb Code    36  switchled.o(i.Switch_SpecialFire)
+    SysTick_Handler                          0x00002479   Thumb Code   100  spaceinvaders.o(i.SysTick_Handler)
+    SysTick_Init                             0x000024ed   Thumb Code    42  spaceinvaders.o(i.SysTick_Init)
+    TExaS_Init                               0x0000251d   Thumb Code   324  texas.o(i.TExaS_Init)
+    Timer2A_Handler                          0x000026e1   Thumb Code    40  spaceinvaders.o(i.Timer2A_Handler)
+    Timer2_Init                              0x00002711   Thumb Code    84  spaceinvaders.o(i.Timer2_Init)
+    Timer4A_Handler                          0x00002779   Thumb Code    20  texas.o(i.Timer4A_Handler)
+    Timer5A_Handler                          0x00002799   Thumb Code    34  texas.o(i.Timer5A_Handler)
+    UART0_Init                               0x000027c9   Thumb Code   160  texas.o(i.UART0_Init)
+    main                                     0x000028d5   Thumb Code   142  spaceinvaders.o(i.main)
+    NoInputMsg                               0x00002b54   Data          40  texas.o(.constdata)
+    OutputPortMsg0                           0x00002b7c   Data          40  texas.o(.constdata)
+    OutputPortMsg1                           0x00002ba4   Data          40  texas.o(.constdata)
+    OutputPortMsg2                           0x00002bcc   Data          40  texas.o(.constdata)
+    OutputPortMsg3                           0x00002bf4   Data          40  texas.o(.constdata)
+    BlankMsg                                 0x00002c1c   Data          40  texas.o(.constdata)
+    InitializedMsg                           0x00002c44   Data          40  texas.o(.constdata)
+    IntroMsg                                 0x00002c6c   Data          40  texas.o(.constdata)
+    DoneMsg                                  0x00002c94   Data          40  texas.o(.constdata)
+    SmallEnemy30PointA                       0x00002e9c   Data         199  gameengine.o(.constdata)
+    SmallEnemy30PointB                       0x00002f63   Data         199  gameengine.o(.constdata)
+    SmallEnemy20PointA                       0x0000302a   Data         199  gameengine.o(.constdata)
+    SmallEnemy20PointB                       0x000030f1   Data         199  gameengine.o(.constdata)
+    SmallEnemy10PointA                       0x000031b8   Data         199  gameengine.o(.constdata)
+    SmallEnemy10PointB                       0x0000327f   Data         199  gameengine.o(.constdata)
+    PlayerShip0                              0x00003346   Data         215  gameengine.o(.constdata)
+    SmallEnemyBonus0                         0x0000341d   Data         203  gameengine.o(.constdata)
+    Bunker0                                  0x000034e8   Data         179  gameengine.o(.constdata)
+    Bunker1                                  0x0000359b   Data         179  gameengine.o(.constdata)
+    Bunker2                                  0x0000364e   Data         179  gameengine.o(.constdata)
+    Bunker3                                  0x00003701   Data         179  gameengine.o(.constdata)
+    BigExplosion0                            0x000037b4   Data         215  gameengine.o(.constdata)
+    BigExplosion1                            0x0000388b   Data         215  gameengine.o(.constdata)
+    SmallExplosion0                          0x00003962   Data         199  gameengine.o(.constdata)
+    SmallExplosion1                          0x00003a29   Data         199  gameengine.o(.constdata)
+    Missile0                                 0x00003af0   Data         155  gameengine.o(.constdata)
+    Missile1                                 0x00003b8b   Data         155  gameengine.o(.constdata)
+    Missile2                                 0x00003c26   Data         155  gameengine.o(.constdata)
+    Laser0                                   0x00003cc1   Data         155  gameengine.o(.constdata)
+    Laser1                                   0x00003d5c   Data         155  gameengine.o(.constdata)
+    shoot                                    0x00003df7   Data        4080  sound.o(.constdata)
+    invaderkilled                            0x00004de7   Data        3377  sound.o(.constdata)
+    explosion                                0x00005b18   Data        2000  sound.o(.constdata)
+    invadershoot                             0x000062e8   Data         982  sound.o(.constdata)
+    Region$$Table$$Base                      0x000066c0   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x000066e0   Number         0  anon$$obj.o(Region$$Table)
     Semaphore                                0x20000000   Data           1  spaceinvaders.o(.data)
     GameOverFlag                             0x20000001   Data           1  spaceinvaders.o(.data)
     PeriodicTask                             0x20000004   Data           4  spaceinvaders.o(.data)
@@ -918,9 +917,9 @@ Memory Map of the image
 
   Image Entry point : 0x0000026d
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x0000674c, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x00006754, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Base: 0x00000000, Size: 0x000066d8, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Base: 0x00000000, Size: 0x000066e0, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -1041,29 +1040,29 @@ Memory Map of the image
     0x00001f1c   0x00000014   Code   RO          563    i.Sound_Shoot       sound.o
     0x00001f30   0x000001d4   Code   RO          332    i.SpecMissileMove   gameengine.o
     0x00002104   0x00000134   Code   RO          333    i.SpecMissile_Fire  gameengine.o
-    0x00002238   0x000000d0   Code   RO          334    i.State_GameOver    gameengine.o
-    0x00002308   0x0000001c   Code   RO          497    i.Success_LedCount  switchled.o
-    0x00002324   0x00000018   Code   RO          498    i.Success_LedOff    switchled.o
-    0x0000233c   0x00000020   Code   RO          499    i.Success_LedOn     switchled.o
-    0x0000235c   0x000000bc   Code   RO          500    i.SwitchLed_Init    switchled.o
-    0x00002418   0x0000002c   Code   RO          501    i.Switch_Fire       switchled.o
-    0x00002444   0x0000002c   Code   RO          502    i.Switch_SpecialFire  switchled.o
-    0x00002470   0x00000074   Code   RO           97    i.SysTick_Handler   spaceinvaders.o
-    0x000024e4   0x00000030   Code   RO           98    i.SysTick_Init      spaceinvaders.o
-    0x00002514   0x000001c4   Code   RO          159    i.TExaS_Init        texas.o
-    0x000026d8   0x00000030   Code   RO           99    i.Timer2A_Handler   spaceinvaders.o
-    0x00002708   0x00000068   Code   RO          100    i.Timer2_Init       spaceinvaders.o
-    0x00002770   0x00000020   Code   RO          161    i.Timer4A_Handler   texas.o
-    0x00002790   0x00000030   Code   RO          162    i.Timer5A_Handler   texas.o
-    0x000027c0   0x000000c0   Code   RO          165    i.UART0_Init        texas.o
-    0x00002880   0x0000004c   Code   RO           22    i.lcdwrite          nokia5110.o
-    0x000028cc   0x000000a0   Code   RO          101    i.main              spaceinvaders.o
-    0x0000296c   0x000001e0   Data   RO           24    .constdata          nokia5110.o
-    0x00002b4c   0x00000168   Data   RO          170    .constdata          texas.o
-    0x00002cb4   0x0000113b   Data   RO          336    .constdata          gameengine.o
-    0x00003def   0x000028c7   Data   RO          564    .constdata          sound.o
-    0x000066b6   0x00000002   PAD
-    0x000066b8   0x00000020   Data   RO          766    Region$$Table       anon$$obj.o
+    0x00002238   0x000000d8   Code   RO          334    i.State_GameOver    gameengine.o
+    0x00002310   0x0000001c   Code   RO          497    i.Success_LedCount  switchled.o
+    0x0000232c   0x00000018   Code   RO          498    i.Success_LedOff    switchled.o
+    0x00002344   0x00000020   Code   RO          499    i.Success_LedOn     switchled.o
+    0x00002364   0x000000bc   Code   RO          500    i.SwitchLed_Init    switchled.o
+    0x00002420   0x0000002c   Code   RO          501    i.Switch_Fire       switchled.o
+    0x0000244c   0x0000002c   Code   RO          502    i.Switch_SpecialFire  switchled.o
+    0x00002478   0x00000074   Code   RO           97    i.SysTick_Handler   spaceinvaders.o
+    0x000024ec   0x00000030   Code   RO           98    i.SysTick_Init      spaceinvaders.o
+    0x0000251c   0x000001c4   Code   RO          159    i.TExaS_Init        texas.o
+    0x000026e0   0x00000030   Code   RO           99    i.Timer2A_Handler   spaceinvaders.o
+    0x00002710   0x00000068   Code   RO          100    i.Timer2_Init       spaceinvaders.o
+    0x00002778   0x00000020   Code   RO          161    i.Timer4A_Handler   texas.o
+    0x00002798   0x00000030   Code   RO          162    i.Timer5A_Handler   texas.o
+    0x000027c8   0x000000c0   Code   RO          165    i.UART0_Init        texas.o
+    0x00002888   0x0000004c   Code   RO           22    i.lcdwrite          nokia5110.o
+    0x000028d4   0x000000a0   Code   RO          101    i.main              spaceinvaders.o
+    0x00002974   0x000001e0   Data   RO           24    .constdata          nokia5110.o
+    0x00002b54   0x00000168   Data   RO          170    .constdata          texas.o
+    0x00002cbc   0x0000113b   Data   RO          336    .constdata          gameengine.o
+    0x00003df7   0x000028c7   Data   RO          564    .constdata          sound.o
+    0x000066be   0x00000002   PAD
+    0x000066c0   0x00000020   Data   RO          766    Region$$Table       anon$$obj.o
 
 
     Execution Region ER_RW (Base: 0x20000000, Size: 0x00000074, Max: 0xffffffff, ABSOLUTE)
@@ -1101,7 +1100,7 @@ Image component sizes
 
        252         44          0          0          0        918   adc.o
        108         16          0          0          0        805   dac.o
-      5336        530       4411         22        680      18666   gameengine.o
+      5344        536       4411         22        680      18666   gameengine.o
       1508         94        480          0        504       9797   nokia5110.o
         40         12          0          4          0        220   random.o
        204         60      10439         12          0       3584   sound.o
@@ -1111,7 +1110,7 @@ Image component sizes
       1120        244        360         52         56      15972   texas.o
 
     ----------------------------------------------------------------------
-     10332       1830      15724        116       2268      59894   Object Totals
+     10340       1836      15724        116       2268      59894   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          4          0          2          2          4          0   (incl. Padding)
 
@@ -1160,15 +1159,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     10604       1846      15724        116       2364      56414   Grand Totals
-     10604       1846      15724        116       2364      56414   ELF Image Totals
-     10604       1846      15724        116          0          0   ROM Totals
+     10612       1852      15724        116       2364      56414   Grand Totals
+     10612       1852      15724        116       2364      56414   ELF Image Totals
+     10612       1852      15724        116          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                26328 (  25.71kB)
+    Total RO  Size (Code + RO Data)                26336 (  25.72kB)
     Total RW  Size (RW Data + ZI Data)              2480 (   2.42kB)
-    Total ROM Size (Code + RO Data + RW Data)      26444 (  25.82kB)
+    Total ROM Size (Code + RO Data + RW Data)      26452 (  25.83kB)
 
 ==============================================================================
 

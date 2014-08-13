@@ -478,7 +478,7 @@ void SpecMissileMove(void){
 				SpecMissiles[i].GObj2.life = 0;
 			}
 	  }
-		if(!SpecMissiles[i].GObj1.life && !SpecMissiles[i].GObj2.life && SpecMissileDecrementCheck){
+		if((SpecMissiles[i].GObj1.life == 0) && (SpecMissiles[i].GObj2.life==0) && SpecMissileDecrementCheck){
 			SpecMissileCount--;
 		}
 		 SpecMissileDecrementCheck = 0;
@@ -599,7 +599,7 @@ void State_GameOver(void){
   Nokia5110_SetCursor(1, 0);
   Nokia5110_OutString("GAME OVER");
   Nokia5110_SetCursor(1, 1);
-	if(Check_GameOver()){
+	if(KilledEnemyCount == 12){
 		Nokia5110_OutString("You Won!");
 		Nokia5110_SetCursor(1, 2);
 		Nokia5110_OutString("Good job,");
