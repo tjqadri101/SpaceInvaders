@@ -128,12 +128,12 @@ void SysTick_Init(unsigned long period){
   NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x20000000; // priority 1      
   NVIC_ST_CTRL_R = 0x0007;  // enable SysTick with core clock and interrupts
 }
-void SysTick_Handler(void){  // runs at 30 Hz
+void SysTick_Handler(void){  // runs at frequency of SysTick interrupts
 	GPIO_PORTF_DATA_R ^= 0x02;     // toggle PF1, debugging
 	//Game Engigine methods below
+	Check_Collisions();
 	Move_ActiveObjects();  
 	if(Switch_Fire()){
-		Success_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
 		RegMissile_Fire();
 		Sound_Shoot();
 	}
@@ -142,6 +142,7 @@ void SysTick_Handler(void){  // runs at 30 Hz
 		SpecMissile_Fire();
 		Sound_Shoot();
 	}
+	SysTick_Init(Set_Difficulty());
   Semaphore = 1;
 }
 

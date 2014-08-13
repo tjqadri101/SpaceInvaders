@@ -21,6 +21,13 @@ void SpecMissile_Fire(void);
 //Move all the alive objects in the game according to each objects behavior
 void Move_ActiveObjects(void);
 
+//Detect all the collisions for the current fram and respond appropriately by, for example, turning on LEDS, printing explosions etc
+void Check_Collisions(void);
+
 //Draw the current game state 
 void Draw_Frame(void); 
 
+//Returns a number for SysTick period that is used to initialize SysTick interrupts with a frequency between 30-120Hz
+//Number is returned such that frequency increases as number of killed enemies increases
+//As more enemies are killed, game speed increases, making the game more difficult
+unsigned long Set_Difficulty(void);

@@ -19,7 +19,7 @@ unsigned long ADCdata;  // 12-bit 0 to 4095 sample
 unsigned long Score; //game score
 unsigned char RegMissileCount; //number of active RMTyp on screen
 unsigned char SpecMissileCount; //number of active SLTyp on screen
-unsigned char SpecMissileDecrementCheck; //if 1 decrement the SpecMissileCount
+unsigned char SpecMissileDecrementCheck; //if 1 decrement the SpecMissileCount as long as other conditions also satisfied
 unsigned char LaserCount; //number of active ELTyp on screen
 unsigned char KilledEnemyCount;//number of alive ETyp (enemies on screen)
 unsigned char LaserDelay; //used to create a delay between firing of successive lasers
@@ -43,6 +43,7 @@ typedef struct PlayerSprite PTyp;
 struct EnemySprite {
 	GTyp GObj;
 	const unsigned char *image[2]; // two pointers to images
+	unsigned char explode; //1 = draw explosion
 	unsigned long hitBonus;																	
 };
 typedef struct EnemySprite ETyp;
@@ -83,6 +84,7 @@ struct SpecMissileSprite {
 	GTyp GObj1;
 	GTyp GObj2;
 	const unsigned char *image[2]; // 2 pointers to 2 images
+	unsigned long hitBonus;
 	unsigned long xspeed;	
 	unsigned long yspeed;																	
 };
@@ -126,7 +128,7 @@ void Game_Init(void){
   SpecMissileDecrementCheck = 0;
   LaserCount = 0; 
   KilledEnemyCount = 0;
-	LaserDelay = RandomGenerator(4)+1;
+	LaserDelay = RandomGenerator(4)+2;
 	Player.GObj.x = 32;
 	Player.GObj.y = 47;
 	Player.image = PlayerShip0;
@@ -144,23 +146,24 @@ void Game_Init(void){
 	
   for(i=0;i<12;i++){
 		Enemy[i].GObj.life = 1;
+		Enemy[i].explode = 0;
 		if(i < 4){
 			Enemy[i].GObj.x = 16*i;
-			Enemy[i].GObj.y = ENEMY10H - 1;
+			Enemy[i].GObj.y = ENEMY10H;
 			Enemy[i].image[0] = SmallEnemy30PointA;
 			Enemy[i].image[1] = SmallEnemy30PointB;
 			Enemy[i].hitBonus = 30;
 		}
 		if((i < 8) && (i > 3)){
 			Enemy[i].GObj.x = 16*(i-4);
-			Enemy[i].GObj.y = 2*ENEMY10H - 1;
+			Enemy[i].GObj.y = 2*ENEMY10H;
 			Enemy[i].image[0] = SmallEnemy20PointA;
 			Enemy[i].image[1] = SmallEnemy20PointB;
 			Enemy[i].hitBonus = 20;
 		}
 		if(i > 7){
 			Enemy[i].GObj.x = 16*(i-8);
-			Enemy[i].GObj.y = 3*ENEMY10H - 1;
+			Enemy[i].GObj.y = 3*ENEMY10H;
 			Enemy[i].image[0] = SmallEnemy10PointA;
 			Enemy[i].image[1] = SmallEnemy10PointB;
 			Enemy[i].hitBonus = 10;
@@ -174,24 +177,28 @@ void Game_Init(void){
 //If LaserDelay is not 0, it decrements LaserDelay and returns
 //hence, a delay equal to period of 1 Systick Interrupt (1/30Hz) times initialized value of LaserDelay is created between successive laser fires
 //LaserDelay is always initialized as a random number between 1 and 5
-void EnemyLaserFire(void){unsigned long index;
+void EnemyLaserFire(void){unsigned char i, generate;
 	if(LaserDelay){
 		LaserDelay--;
 		return;
 	}
-	LaserDelay = RandomGenerator(4)+1;
-	index = RandomGenerator(11); //Random number between 0 and 11
-	if(Enemy[index].GObj.life && (LaserCount < MAX_LASERS)){
-		//Lasers are 2 pixels wide
-		//Enemies are 16 pixels wide
-		Lasers[LaserCount].GObj.x = Enemy[index].GObj.x + 6; //set bottom left of laser at the center pixel along x axis of the enemy
-		Lasers[LaserCount].GObj.y = Enemy[index].GObj.y;
-		Lasers[LaserCount].GObj.life = 1;
-		Lasers[LaserCount].image = Laser0;
-		Lasers[LaserCount].yspeed = 2;
-		LaserCount++;
-		Sound_InvaderShoot();
+	LaserDelay = RandomGenerator(4)+2; 
+	for(i = 0; i < 12; i++){
+		generate = RandomGenerator(2); //Random number which is either 0 or 1
+		if(Enemy[i].GObj.life && (LaserCount < MAX_LASERS) && generate){
+			//Lasers are 2 pixels wide
+			//Enemies are 16 pixels wide
+			Lasers[LaserCount].GObj.x = Enemy[i].GObj.x + 6; //set bottom left of laser at the center pixel along x axis of the enemy
+			Lasers[LaserCount].GObj.y = Enemy[i].GObj.y;
+			Lasers[LaserCount].GObj.life = 1;
+			Lasers[LaserCount].image = Laser0;
+			Lasers[LaserCount].yspeed = 2;
+			LaserCount++;
+			Sound_InvaderShoot();
+			return;
+		}
 	}
+
 }
 
 void RegMissile_Fire(void){
@@ -220,11 +227,82 @@ void SpecMissile_Fire(void){
 			//Missile1 will rise upwards and also move to the left
 			SpecMissiles[SpecMissileCount].image[0] =Missile0;
 			SpecMissiles[SpecMissileCount].image[1] =Missile1;
+			SpecMissiles[SpecMissileCount].hitBonus = 10;
 			SpecMissiles[SpecMissileCount].xspeed = 2;
 			SpecMissiles[SpecMissileCount].yspeed = 2;
 			SpecMissileCount++;
 	}
 }
+
+void CheckEnemyRegMissileCollisions(void){unsigned char i, j;
+	for(i = 0; i < 12; i++){		
+		if(Enemy[i].GObj.life){
+			for(j = 0; j < MAX_REG_MISSILES; j++){
+					if((RegMissiles[j].GObj.life) && 
+						!(((RegMissiles[j].GObj.x+LASERW) < Enemy[i].GObj.x) || (RegMissiles[j].GObj.x > (Enemy[i].GObj.x + ENEMY10W))) &&
+						!((RegMissiles[j].GObj.y < (Enemy[i].GObj.y - ENEMY10H)) || ((RegMissiles[j].GObj.y - LASERH) > Enemy[i].GObj.y))){
+								
+							Score += Enemy[i].hitBonus;
+							Enemy[i].GObj.life = 0;
+							RegMissiles[j].GObj.life = 0;
+							Enemy[i].explode = 1;
+							Success_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
+							Sound_Killed();
+							RegMissileCount--;
+							KilledEnemyCount++;
+							break;
+					}
+			}
+		}
+	}
+}
+
+void CheckEnemySpecMissileCollisions(void){unsigned char i, j;
+	for(i = 0; i < 12; i++){		
+		if(Enemy[i].GObj.life){
+			for(j = 0; j < MAX_SPEC_MISSILES; j++){
+					if((SpecMissiles[j].GObj1.life) && 
+						!(((SpecMissiles[j].GObj1.x+MISSILEW) < Enemy[i].GObj.x) || (SpecMissiles[j].GObj1.x > (Enemy[i].GObj.x + ENEMY10W))) &&
+						!((SpecMissiles[j].GObj1.y < (Enemy[i].GObj.y - ENEMY10H)) || ((SpecMissiles[j].GObj1.y - MISSILEH) > Enemy[i].GObj.y))){
+								
+							Score += Enemy[i].hitBonus + SpecMissiles[j].hitBonus;
+							Enemy[i].GObj.life = 0;
+							SpecMissiles[j].GObj1.life = 0;
+							Enemy[i].explode = 1;
+							Success_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
+							Sound_Killed();
+							SpecMissileDecrementCheck = 1;
+							KilledEnemyCount++;
+							break;
+					}
+						
+					if((SpecMissiles[j].GObj2.life) && 
+						!(((SpecMissiles[j].GObj2.x+MISSILEW) < Enemy[i].GObj.x) || (SpecMissiles[j].GObj2.x > (Enemy[i].GObj.x + ENEMY10W))) &&
+						!((SpecMissiles[j].GObj2.y < (Enemy[i].GObj.y - ENEMY10H)) || ((SpecMissiles[j].GObj2.y - MISSILEH) > Enemy[i].GObj.y))){
+								
+							Score += Enemy[i].hitBonus + SpecMissiles[j].hitBonus;
+							Enemy[i].GObj.life = 0;
+							SpecMissiles[j].GObj2.life = 0;
+							Enemy[i].explode = 1;
+							Success_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
+							Sound_Killed();
+							SpecMissileDecrementCheck = 1;
+							KilledEnemyCount++;
+							break;
+					}
+			}
+		}
+	}
+}
+
+
+//Detect all the collisions for the current fram and respond appropriately by, for example, turning on LEDS, printing explosions etc
+//This method has to be called before the Move_ActiveObjects method
+void Check_Collisions(void){
+	CheckEnemyRegMissileCollisions();
+	CheckEnemySpecMissileCollisions();
+}
+
 
 //Move player horizontally across the screen
 //The x co-ordinate of the bottom left corner of the player ship can move from 0 to 64 on the x axis (player ship is 18 pixels wide and screen is 84 pixels)
@@ -331,8 +409,15 @@ void DrawBunkers(void){unsigned char j;
 
 void DrawEnemies(void){unsigned char i;
 	 for(i=0;i<12;i++){
+		//CheckEnemyRegMissileCollisions(i);
     if(Enemy[i].GObj.life > 0){
      Nokia5110_PrintBMP(Enemy[i].GObj.x, Enemy[i].GObj.y, Enemy[i].image[FrameCount], 0);
+		}
+		else{
+			if(Enemy[i].explode){
+					Nokia5110_PrintBMP(Enemy[i].GObj.x, Enemy[i].GObj.y, SmallExplosion0, 0);
+				  Enemy[i].explode = 0;
+			}
 		}
   }
 }
@@ -376,6 +461,12 @@ void Draw_Frame(void){
 	DrawLasers();
   Nokia5110_DisplayBuffer();      // draw buffer
   FrameCount = (FrameCount+1)&0x01; // 0,1,0,1,...
+}
+
+unsigned long Set_Difficulty(void){
+	return 2666666 - KilledEnemyCount*166666; //2666666 corresponds to period of SysTick interrupt with 30 Hz frequency
+																						//12 (max number of killed enemies) * 166666 approximately equals 2666666* (3/4)
+																						//hence period varies from 2666666 to 2666666/4 making frequency vary from 30 Hz to 120Hz
 }
 
   /*Delay100ms(50);              // delay 5 sec at 80 MHz
