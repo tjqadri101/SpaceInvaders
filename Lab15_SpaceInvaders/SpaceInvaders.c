@@ -155,7 +155,6 @@ void SysTick_Handler(void){  // runs at frequency of SysTick interrupts
 			Sound_Shoot();
 		}
 		if(Switch_SpecialFire()){
-			Failure_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
 			SpecMissile_Fire();
 			Sound_Shoot();
 		}

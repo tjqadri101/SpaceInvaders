@@ -348,6 +348,61 @@ void CheckPlayerLaserCollision(void){ unsigned char j;
 		}
 }
 
+void CheckLaserRegMissileCollision(void){unsigned char i, j;
+	for(i = 0; i < MAX_LASERS; i++){		
+		if(Lasers[i].GObj.life){
+			for(j = 0; j < MAX_REG_MISSILES; j++){
+					if((RegMissiles[j].GObj.life) && 
+						!(((RegMissiles[j].GObj.x+LASERW) < Lasers[i].GObj.x) || (RegMissiles[j].GObj.x > (Lasers[i].GObj.x + LASERW))) &&
+						!((RegMissiles[j].GObj.y < (Lasers[i].GObj.y - LASERH)) || ((RegMissiles[j].GObj.y - LASERH) > Lasers[i].GObj.y))){
+					
+							Score += 1;
+							Lasers[i].GObj.life = 0;
+							RegMissiles[j].GObj.life = 0;
+							RegMissileCount--;
+							LaserCount--;
+							Success_LedOn(100); // 100 Timer2A periods approximately equal 0.09s
+							break;
+					}
+			}
+		}
+	}
+}
+
+void CheckLaserSpecMissileCollision(void){unsigned char i, j;
+	for(i = 0; i < MAX_LASERS; i++){		
+		if(Lasers[i].GObj.life){
+			for(j = 0; j < MAX_SPEC_MISSILES; j++){
+					if((SpecMissiles[j].GObj1.life) && 
+						!(((SpecMissiles[j].GObj1.x+MISSILEW) < Lasers[i].GObj.x) || (SpecMissiles[j].GObj1.x > (Lasers[i].GObj.x + LASERW))) &&
+						!((SpecMissiles[j].GObj1.y < (Lasers[i].GObj.y - LASERH)) || ((SpecMissiles[j].GObj1.y - MISSILEH) > Lasers[i].GObj.y))){
+					
+							Score += 2;
+							Lasers[i].GObj.life = 0;
+							SpecMissiles[j].GObj1.life = 0;
+							SpecMissileDecrementCheck = 1;
+							LaserCount--;
+							Success_LedOn(100); // 100 Timer2A periods approximately equal 0.09s
+							break;
+					}
+						
+						if((SpecMissiles[j].GObj2.life) && 
+						!(((SpecMissiles[j].GObj2.x+MISSILEW) < Lasers[i].GObj.x) || (SpecMissiles[j].GObj2.x > (Lasers[i].GObj.x + LASERW))) &&
+						!((SpecMissiles[j].GObj2.y < (Lasers[i].GObj.y - LASERH)) || ((SpecMissiles[j].GObj2.y - MISSILEH) > Lasers[i].GObj.y))){
+					
+							Score += 2;
+							Lasers[i].GObj.life = 0;
+							SpecMissiles[j].GObj2.life = 0;
+							SpecMissileDecrementCheck = 1;
+							LaserCount--;
+							Success_LedOn(100); // 100 Timer2A periods approximately equal 0.09s
+							break;
+					}
+			}
+		}
+	}
+}
+
 //Detect all the collisions for the current fram and respond appropriately by, for example, turning on LEDS, printing explosions etc
 //This method has to be called before the Move_ActiveObjects method
 void Check_Collisions(void){
@@ -355,7 +410,8 @@ void Check_Collisions(void){
 	CheckEnemySpecMissileCollisions();
 	CheckBumperLaserCollision();
 	CheckPlayerLaserCollision();
-	
+	CheckLaserRegMissileCollision();
+	CheckLaserSpecMissileCollision();	
 }
 
 
@@ -540,24 +596,24 @@ unsigned char Check_GameOver(void){
 //Output the frame for the Game Over State
 void State_GameOver(void){
 	Nokia5110_Clear();
-  Nokia5110_SetCursor(1, 1);
+  Nokia5110_SetCursor(1, 0);
   Nokia5110_OutString("GAME OVER");
-  Nokia5110_SetCursor(1, 2);
+  Nokia5110_SetCursor(1, 1);
 	if(Check_GameOver()){
 		Nokia5110_OutString("You Won!");
-		Nokia5110_SetCursor(1, 3);
+		Nokia5110_SetCursor(1, 2);
 		Nokia5110_OutString("Good job,");
 	}
 	else{
 		Nokia5110_OutString("You Lost!");
-		Nokia5110_SetCursor(1, 3);
+		Nokia5110_SetCursor(1, 2);
 		Nokia5110_OutString("Nice try,");
 	}
-  Nokia5110_SetCursor(1, 4);
+  Nokia5110_SetCursor(1, 3);
   Nokia5110_OutString("Earthling!");
-	Nokia5110_SetCursor(1, 5);
+	Nokia5110_SetCursor(1, 4);
   Nokia5110_OutString("Score:");
-  Nokia5110_SetCursor(7, 5);
+  Nokia5110_SetCursor(7, 4);
   Nokia5110_OutUDec(Score);
 }
 
