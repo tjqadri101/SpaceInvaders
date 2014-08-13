@@ -17,12 +17,13 @@ unsigned long FrameCount=0; //to anmate enemies while they move
 unsigned long Distance; // units 0.001 cm
 unsigned long ADCdata;  // 12-bit 0 to 4095 sample
 unsigned long Score; //game score
-unsigned char RegMissileCount = 0; //number of active RMTyp on screen
-unsigned char SpecMissileCount = 0; //number of active SLTyp on screen
-unsigned char SpecMissileDecrementCheck = 0; //if 1 decrement the SpecMissileCount
-unsigned char LaserCount = 0; //number of active ELTyp on screen
-unsigned char EnemyCount = 0;//number of alive ETyp (enemies on screen)
-unsigned char LaserDelay = 0; //used to create a delay between firing of successive lasers
+unsigned char RegMissileCount; //number of active RMTyp on screen
+unsigned char SpecMissileCount; //number of active SLTyp on screen
+unsigned char SpecMissileDecrementCheck; //if 1 decrement the SpecMissileCount
+unsigned char LaserCount; //number of active ELTyp on screen
+unsigned char KilledEnemyCount;//number of alive ETyp (enemies on screen)
+unsigned char LaserDelay; //used to create a delay between firing of successive lasers
+unsigned char GameOverBool; //1 = Game over, 0 = Game in progress
 
 
 struct GameObject {
@@ -42,9 +43,10 @@ typedef struct PlayerSprite PTyp;
 struct EnemySprite {
 	GTyp GObj;
 	const unsigned char *image[2]; // two pointers to images
-																		
+	unsigned long hitBonus;																	
 };
-typedef struct BunkerSprite ETyp;
+typedef struct EnemySprite ETyp;
+
 struct BunkerSprite {
 	GTyp GObj;
 	const unsigned char *image[4]; //4 pointers to images
@@ -118,8 +120,12 @@ unsigned long RandomGenerator(unsigned long enemies){
 
 void Game_Init(void){ 
 	unsigned char i, j;
-	ADC0_Init();
 	Score = 0;
+	RegMissileCount = 0;
+  SpecMissileCount = 0; 
+  SpecMissileDecrementCheck = 0;
+  LaserCount = 0; 
+  KilledEnemyCount = 0;
 	LaserDelay = RandomGenerator(4)+1;
 	Player.GObj.x = 32;
 	Player.GObj.y = 47;
@@ -137,28 +143,28 @@ void Game_Init(void){
 	}
 	
   for(i=0;i<12;i++){
+		Enemy[i].GObj.life = 1;
 		if(i < 4){
 			Enemy[i].GObj.x = 16*i;
 			Enemy[i].GObj.y = ENEMY10H - 1;
 			Enemy[i].image[0] = SmallEnemy30PointA;
 			Enemy[i].image[1] = SmallEnemy30PointB;
-			Enemy[i].GObj.life = 1;
+			Enemy[i].hitBonus = 30;
 		}
 		if((i < 8) && (i > 3)){
 			Enemy[i].GObj.x = 16*(i-4);
 			Enemy[i].GObj.y = 2*ENEMY10H - 1;
 			Enemy[i].image[0] = SmallEnemy20PointA;
 			Enemy[i].image[1] = SmallEnemy20PointB;
-			Enemy[i].GObj.life = 1;
+			Enemy[i].hitBonus = 20;
 		}
 		if(i > 7){
 			Enemy[i].GObj.x = 16*(i-8);
 			Enemy[i].GObj.y = 3*ENEMY10H - 1;
 			Enemy[i].image[0] = SmallEnemy10PointA;
 			Enemy[i].image[1] = SmallEnemy10PointB;
-			Enemy[i].GObj.life = 1;
+			Enemy[i].hitBonus = 10;
 		}
-		EnemyCount++;
    }
 }
 

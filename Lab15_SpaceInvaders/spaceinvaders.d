@@ -4,5 +4,6 @@
 .\spaceinvaders.o: SwitchLed.h
 .\spaceinvaders.o: Sound.h
 .\spaceinvaders.o: Random.h
+.\spaceinvaders.o: ADC.h
 .\spaceinvaders.o: GameEngine.h
 .\spaceinvaders.o: TExaS.h

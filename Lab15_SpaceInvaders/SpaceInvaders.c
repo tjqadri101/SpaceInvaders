@@ -63,6 +63,7 @@ http://users.ece.utexas.edu/~valvano/
 #include "SwitchLed.h"
 #include "Sound.h"
 #include "Random.h"
+#include "ADC.h"
 #include "GameEngine.h"
 #include "TExaS.h"
 
@@ -72,8 +73,6 @@ http://users.ece.utexas.edu/~valvano/
 //Global variables
 unsigned char TimerCount;
 unsigned char Semaphore = 0;
-unsigned long SuccessLedCount;
-unsigned long FailureLedCount;
 
 // FUNCTION PROTOTYPES: Each subroutine defined
 void DisableInterrupts(void); // Disable interrupts
@@ -83,7 +82,7 @@ void Delay100ms(unsigned long count); // time delay in 0.1 seconds
 void PF1Init(void); //Initialize PF1 (PF1) for debugging the SysTick interrupts
 //void SwitchLed_Init(void);// Initialize switch inputs and LED outputs
 void SysTick_Init(unsigned long period); // Initialize SysTick interrupts
-void (*PeriodicTask)(void);   // user function for Timer2A
+void (*PeriodicTask)(void);   // user function for Timer2A (comes from Sound.c and outputs to 4 bit DAC)
 
 // ***** 3. Subroutines Section *****
 
@@ -96,6 +95,7 @@ int main(void){
   SysTick_Init(2666666); //Initialize SysTick with 30 Hz interrupts
   Nokia5110_ClearBuffer();
 	Nokia5110_DisplayBuffer();      // draw buffer
+	ADC0_Init();
 	Game_Init();
 	SwitchLed_Init();
 	Sound_Init();
@@ -130,16 +130,15 @@ void SysTick_Init(unsigned long period){
 }
 void SysTick_Handler(void){  // runs at 30 Hz
 	GPIO_PORTF_DATA_R ^= 0x02;     // toggle PF1, debugging
+	//Game Engigine methods below
 	Move_ActiveObjects();  
 	if(Switch_Fire()){
-		Success_LedOn();
-		SuccessLedCount = 10000; //.09s
+		Success_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
 		RegMissile_Fire();
 		Sound_Shoot();
 	}
 	if(Switch_SpecialFire()){
-		Failure_LedOn();
-		FailureLedCount = 10000;//.09s
+		Failure_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
 		SpecMissile_Fire();
 		Sound_Shoot();
 	}
@@ -172,20 +171,15 @@ void Timer2_Init(void(*task)(void), unsigned long period){
 }
 
 void Timer2A_Handler(void){
+	unsigned long checkSuccessLed = Success_LedCount();
+	unsigned long checkFailureLed = Failure_LedCount();
    TIMER2_ICR_R = 0x00000001;   // acknowledge timer2A timeout
-	if(SuccessLedCount){
-		SuccessLedCount--;
-	}
-	else if(SuccessLedCount == 0){
+	if(!checkSuccessLed) //SucccessLedCount = 0
 		Success_LedOff();
-	}
 	
-	if(FailureLedCount){
-		FailureLedCount--;
-	}
-	else if(FailureLedCount == 0){
-			Failure_LedOff();
-	}
+	if(!checkFailureLed)//FailureLedCount = 0
+		Failure_LedOff();
+	
   (*PeriodicTask)();                // execute user task
 }
 

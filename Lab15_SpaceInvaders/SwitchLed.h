@@ -27,10 +27,18 @@ unsigned char Switch_Fire(void);
 unsigned char Switch_SpecialFire(void);
 
 //Turns on Led connected to PB4 when something positive happens e.g. enemy hit, game won etc.
-void Success_LedOn(void);
+//Initializes a value for the SuccessLedCount variable which can be used to determine how many interrupt periods (like Timer2A perids the LED  should stay on
+void Success_LedOn(unsigned long count);
 
 //Turns on Led connected to PB5 when something negative happens e.g. player hit, bunker hit, game lost etc.
-void Failure_LedOn(void);
+//Initializes a value for the FailureLedCount variable which can be used to determine how many interrupt periods (like Timer2A perids the LED  should stay on
+void Failure_LedOn(unsigned long count);
+
+//Decrements the value of the SuccessLedCount variable and then returns this value
+unsigned long Success_LedCount(void);
+
+//Decrements the value of the FailureLedCount variable and then returns this value
+unsigned long Failure_LedCount(void);
 
 //Turns off Led connected to PB4 
 void Success_LedOff(void);

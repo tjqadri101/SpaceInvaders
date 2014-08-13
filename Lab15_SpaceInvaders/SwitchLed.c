@@ -14,7 +14,8 @@
 
 unsigned long PrevRegFire = 0;
 unsigned long PrevSpecFire = 0;
-
+unsigned long SuccessLedCount = 0;
+unsigned long FailureLedCount = 0;
 
 // Initialize switch inputs and LED outputs
 // Input: none
@@ -72,13 +73,33 @@ unsigned char Switch_SpecialFire(void){
 
 
 //Turns on Led connected to PB4 when something positive happens e.g. enemy hit, game won etc.
-void Success_LedOn(void){
+//Initializes a value for the SuccessLedCount variable which can be used to determine how many interrupt periods (like Timer2A perids the LED  should stay on
+void Success_LedOn(unsigned long count){
 	GPIO_PORTB_DATA_R |= 0x10;
+	SuccessLedCount = count;
 }
 
 //Turns on Led connected to PB5 when something negative happens e.g. player hit, bunker hit, game lost etc.
-void Failure_LedOn(void){
+//Initializes a value for the FailureLedCount variable which can be used to determine how many interrupt periods (like Timer2A perids the LED  should stay on
+void Failure_LedOn(unsigned long count){
 	GPIO_PORTB_DATA_R |= 0x20;
+	FailureLedCount = count;
+}
+
+//Decrements the value of the SuccessLedCount variable and then returns this value
+unsigned long Success_LedCount(void){
+	if(SuccessLedCount)
+			SuccessLedCount--;
+	
+	return SuccessLedCount;
+}
+
+//Decrements the value of the FailureLedCount variable and then returns this value
+unsigned long Failure_LedCount(void){
+	if(FailureLedCount)
+			FailureLedCount--;
+	
+	return FailureLedCount;
 }
 
 //Turns off Led connected to PB4 
