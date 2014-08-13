@@ -23,7 +23,6 @@ unsigned char SpecMissileDecrementCheck; //if 1 decrement the SpecMissileCount a
 unsigned char LaserCount; //number of active ELTyp on screen
 unsigned char KilledEnemyCount;//number of alive ETyp (enemies on screen)
 unsigned char LaserDelay; //used to create a delay between firing of successive lasers
-unsigned char GameOverBool; //1 = Game over, 0 = Game in progress
 
 
 struct GameObject {
@@ -37,6 +36,7 @@ struct PlayerSprite {
 	GTyp GObj;
 	const unsigned char *image; // a single pointer to image
 																		//no animation used
+	unsigned char explode; //explode if > 0
 };
 typedef struct PlayerSprite PTyp;
 
@@ -128,10 +128,11 @@ void Game_Init(void){
   SpecMissileDecrementCheck = 0;
   LaserCount = 0; 
   KilledEnemyCount = 0;
-	LaserDelay = RandomGenerator(4)+2;
+	LaserDelay = RandomGenerator(4);
 	Player.GObj.x = 32;
 	Player.GObj.y = 47;
 	Player.image = PlayerShip0;
+	Player.explode = 0;
 	Player.GObj.life = 1;
 	
 	for(j=0;j<2;j++){
@@ -182,7 +183,7 @@ void EnemyLaserFire(void){unsigned char i, generate;
 		LaserDelay--;
 		return;
 	}
-	LaserDelay = RandomGenerator(4)+2; 
+	LaserDelay = RandomGenerator(4); 
 	for(i = 0; i < 12; i++){
 		generate = RandomGenerator(2); //Random number which is either 0 or 1
 		if(Enemy[i].GObj.life && (LaserCount < MAX_LASERS) && generate){
@@ -295,12 +296,55 @@ void CheckEnemySpecMissileCollisions(void){unsigned char i, j;
 	}
 }
 
+void CheckBumperLaserCollision(void){unsigned char i, j;
+		for(i = 0; i < 2; i++){		
+		if(Bunkers[i].GObj.life){
+			for(j = 0; j < MAX_LASERS; j++){
+					if((Lasers[j].GObj.life) && 
+						!(((Lasers[j].GObj.x+LASERW) < Bunkers[i].GObj.x) || (Lasers[j].GObj.x > (Bunkers[i].GObj.x + BUNKERW))) &&
+						!((Lasers[j].GObj.y < (Bunkers[i].GObj.y - BUNKERH)) || ((Lasers[j].GObj.y - LASERH) > Bunkers[i].GObj.y))){
+					
+							Bunkers[i].GObj.life--;
+							Lasers[j].GObj.life = 0;
+							Failure_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
+							LaserCount--;
+							if(Bunkers[i].GObj.life == 0){
+								Sound_Explosion();
+								break;
+							}
+					}
+			}
+		}
+	}
+}
+
+void CheckPlayerLaserCollision(void){ unsigned char j;
+		if(Player.GObj.life){
+			for(j = 0; j < MAX_LASERS; j++){
+					if((Lasers[j].GObj.life) && 
+						!(((Lasers[j].GObj.x+LASERW) < Player.GObj.x) || (Lasers[j].GObj.x > (Player.GObj.x + PLAYERW))) &&
+						!((Lasers[j].GObj.y < (Player.GObj.y - PLAYERH)) || ((Lasers[j].GObj.y - LASERH) > Player.GObj.y))){
+					
+							Player.GObj.life = 0;
+							Player.explode = 1;
+							Lasers[j].GObj.life = 0;
+							Failure_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
+							LaserCount--;
+							Sound_Explosion();
+							break;
+					}
+			}
+		}
+}
 
 //Detect all the collisions for the current fram and respond appropriately by, for example, turning on LEDS, printing explosions etc
 //This method has to be called before the Move_ActiveObjects method
 void Check_Collisions(void){
 	CheckEnemyRegMissileCollisions();
 	CheckEnemySpecMissileCollisions();
+	CheckBumperLaserCollision();
+	CheckPlayerLaserCollision();
+	
 }
 
 
@@ -398,7 +442,13 @@ void Move_ActiveObjects(void){
 }
 
 void DrawPlayer(void){
-	Nokia5110_PrintBMP(Player.GObj.x, Player.GObj.y, Player.image, 0); // player ship middle bottom
+	if(Player.GObj.life){
+		Nokia5110_PrintBMP(Player.GObj.x, Player.GObj.y, Player.image, 0); // player ship middle bottom
+	}
+	else if(Player.explode){
+		Player.explode = 0;
+		Nokia5110_PrintBMP(Player.GObj.x, Player.GObj.y,  BigExplosion0, 0); // player ship middle botto
+	}
 }
 
 void DrawBunkers(void){unsigned char j;
