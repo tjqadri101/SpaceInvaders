@@ -121,7 +121,7 @@ unsigned long RandomGenerator(unsigned long enemies){
 }
 
 void Game_Init(void){ 
-	unsigned char i, j;
+	unsigned char i, j, k, l, m;
 	Score = 0;
 	RegMissileCount = 0;
   SpecMissileCount = 0; 
@@ -170,6 +170,17 @@ void Game_Init(void){
 			Enemy[i].hitBonus = 10;
 		}
    }
+	
+	 for(k = 0; k < MAX_LASERS; k++){
+		 Lasers[k].GObj.life = 0;
+	 }
+	 for(l = 0; l < MAX_REG_MISSILES; l++){
+		 RegMissiles[l].GObj.life = 0;
+	 }
+	 for(m = 0; m < MAX_SPEC_MISSILES; m++){
+		 SpecMissiles[m].GObj1.life = 0;
+		 SpecMissiles[m].GObj2.life = 0;
+	 }
 }
 
 //Fire laser from an enemy if the number of lasers on screen is less than 5
@@ -501,7 +512,7 @@ void DrawLasers(void){unsigned char i;
   }
 }
 
-void Draw_Frame(void){
+void Draw_GameFrame(void){
   Nokia5110_ClearBuffer();
 	DrawPlayer();
 	DrawBunkers();
@@ -519,13 +530,34 @@ unsigned long Set_Difficulty(void){
 																						//hence period varies from 2666666 to 2666666/4 making frequency vary from 30 Hz to 120Hz
 }
 
-  /*Delay100ms(50);              // delay 5 sec at 80 MHz
-  Nokia5110_Clear();
+//returns 1 if game over; 0 otherwise
+unsigned char Check_GameOver(void){
+	if((KilledEnemyCount == 12) || (Player.GObj.life == 0))
+		return 1;
+	return 0;
+}
+
+//Output the frame for the Game Over State
+void State_GameOver(void){
+	Nokia5110_Clear();
   Nokia5110_SetCursor(1, 1);
   Nokia5110_OutString("GAME OVER");
   Nokia5110_SetCursor(1, 2);
-  Nokia5110_OutString("Nice try,");
-  Nokia5110_SetCursor(1, 3);
+	if(Check_GameOver()){
+		Nokia5110_OutString("You Won!");
+		Nokia5110_SetCursor(1, 3);
+		Nokia5110_OutString("Good job,");
+	}
+	else{
+		Nokia5110_OutString("You Lost!");
+		Nokia5110_SetCursor(1, 3);
+		Nokia5110_OutString("Nice try,");
+	}
+  Nokia5110_SetCursor(1, 4);
   Nokia5110_OutString("Earthling!");
-  Nokia5110_SetCursor(2, 4);
-  Nokia5110_OutUDec(1234);*/
+	Nokia5110_SetCursor(1, 5);
+  Nokia5110_OutString("Score:");
+  Nokia5110_SetCursor(7, 5);
+  Nokia5110_OutUDec(Score);
+}
+

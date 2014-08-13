@@ -25,9 +25,16 @@ void Move_ActiveObjects(void);
 void Check_Collisions(void);
 
 //Draw the current game state 
-void Draw_Frame(void); 
+void Draw_GameFrame(void); 
 
 //Returns a number for SysTick period that is used to initialize SysTick interrupts with a frequency between 30-120Hz
 //Number is returned such that frequency increases as number of killed enemies increases
 //As more enemies are killed, game speed increases, making the game more difficult
 unsigned long Set_Difficulty(void);
+
+//returns 1 if game over; 0 otherwise
+unsigned char Check_GameOver(void);
+
+//Output the frame for the Game Over State
+void State_GameOver(void);
+

@@ -71,7 +71,7 @@ http://users.ece.utexas.edu/~valvano/
 //***** 2. Global Declarations Section *****
 
 //Global variables
-unsigned char TimerCount;
+unsigned char GameOverFlag;
 unsigned char Semaphore = 0;
 
 // FUNCTION PROTOTYPES: Each subroutine defined
@@ -100,14 +100,24 @@ int main(void){
 	SwitchLed_Init();
 	Sound_Init();
 	Timer2_Init(&Sound_Play,7256); //11.025 kHz. 80,000,000/11,025 cycles, which is about 7256
+	GameOverFlag = 0;
 	EnableInterrupts();
 	
   while(1){
 		while(Semaphore==0){};
-    Draw_Frame(); // update the LCD
     Semaphore = 0;
-  }
-
+		if(GameOverFlag){
+			State_GameOver();
+		}
+		else{
+			Draw_GameFrame(); // update the LCD
+		}	
+		if((GameOverFlag == 0) && (Check_GameOver())){ //just detected game over
+			Delay100ms(2);//Delay 200ms
+			GameOverFlag = Check_GameOver();
+			SysTick_Init(2666666);//Re-initialize with 30 Hz interrupt
+		}
+	}
 }
 
 void PF1Init(void){
@@ -131,18 +141,26 @@ void SysTick_Init(unsigned long period){
 void SysTick_Handler(void){  // runs at frequency of SysTick interrupts
 	GPIO_PORTF_DATA_R ^= 0x02;     // toggle PF1, debugging
 	//Game Engigine methods below
-	Check_Collisions();
-	Move_ActiveObjects();  
-	if(Switch_Fire()){
-		RegMissile_Fire();
-		Sound_Shoot();
+	if(GameOverFlag){
+		if(Switch_Fire() || Switch_SpecialFire()){
+			GameOverFlag = 0;
+			Game_Init();
+		}
 	}
-	if(Switch_SpecialFire()){
-		Failure_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
-		SpecMissile_Fire();
-		Sound_Shoot();
+	else{
+		Check_Collisions();
+		Move_ActiveObjects();  
+		if(Switch_Fire()){
+			RegMissile_Fire();
+			Sound_Shoot();
+		}
+		if(Switch_SpecialFire()){
+			Failure_LedOn(1000); // 1000 Timer2A periods approximately equal 0.9s
+			SpecMissile_Fire();
+			Sound_Shoot();
+		}
+		SysTick_Init(Set_Difficulty());
 	}
-	SysTick_Init(Set_Difficulty());
   Semaphore = 1;
 }
 
