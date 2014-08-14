@@ -581,9 +581,14 @@ void Draw_GameFrame(void){
 }
 
 unsigned long Set_Difficulty(void){
-	return 2666666 - KilledEnemyCount*166666; //2666666 corresponds to period of SysTick interrupt with 30 Hz frequency
+	/*return 2666666 - KilledEnemyCount*166666; //2666666 corresponds to period of SysTick interrupt with 30 Hz frequency
 																						//12 (max number of killed enemies) * 166666 approximately equals 2666666* (3/4)
 																						//hence period varies from 2666666 to 2666666/4 making frequency vary from 30 Hz to 120Hz
+	*/
+	//Increased returned period to make game run at a more playable speed
+	return 2666666*4 - KilledEnemyCount*666666; //2666666*4 corresponds to period of SysTick interrupt with 7.5 Hz frequency
+																						//12 (max number of killed enemies) * 666666 approximately equals (2666666*4)* (3/4)
+																						//hence frequency varies from 7.5 Hz to 30 Hz
 }
 
 //returns 1 if game over; 0 otherwise

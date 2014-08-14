@@ -54,8 +54,7 @@ ARM Macro Assembler    Page 1
               3C6EF35F 
 Command Line: --debug --xref --cpu=Cortex-M4 --apcs=interwork --depend=.\random
 .d -o.\random.o -IC:\Keil\ARM\RV31\INC -IC:\Keil\ARM\CMSIS\Include -IC:\Keil\AR
-M\Inc\Luminary --predefine="__RTX SETA 1" --predefine="__EVAL SETA 1" --list=.\
-random.lst random.s
+M\Inc\Luminary --predefine="__EVAL SETA 1" --list=.\random.lst random.s
 
 
 
@@ -111,4 +110,4 @@ Symbol: Random_Init
       At line 19 in file random.s
 Comment: Random_Init used once
 3 symbols
-339 symbols in table
+338 symbols in table

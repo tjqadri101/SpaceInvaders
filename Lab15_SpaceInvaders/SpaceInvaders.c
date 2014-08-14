@@ -92,7 +92,8 @@ int main(void){
 	Random_Init(1);
   Nokia5110_Init();
 	PF1Init();
-  SysTick_Init(2666666); //Initialize SysTick with 30 Hz interrupts
+  //SysTick_Init(2666666); //Initialize SysTick with 30 Hz interrupts
+	SysTick_Init(2666666*4); //Increased period by 4 for actual hardware to make the game run at a playable speed
   Nokia5110_ClearBuffer();
 	Nokia5110_DisplayBuffer();      // draw buffer
 	ADC0_Init();
@@ -115,7 +116,8 @@ int main(void){
 		if((GameOverFlag == 0) && (Check_GameOver())){ //just detected game over
 			Delay100ms(2);//Delay 200ms
 			GameOverFlag = Check_GameOver();
-			SysTick_Init(2666666);//Re-initialize with 30 Hz interrupt
+			//SysTick_Init(2666666);//Re-initialize with 30 Hz interrupt
+			SysTick_Init(2666666*4); //Increased period by 4 for actual hardware to make the game run at a playable speed
 		}
 	}
 }
