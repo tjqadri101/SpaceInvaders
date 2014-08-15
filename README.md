@@ -14,3 +14,5 @@ In this project, object refers to either a function or a data element. A public 
 Before assembling the final hardware, I debugged the system in simulation on the Keil IDE. I began by debugging each module separately. The GameEngine.c had the major functions for the actual game engine which ran in SysTick interrupt service routine. After adding a major function, such as movement, or collision detection, I debugged in simulation. The next link shows a simulation run of the final software version. 
 [Simulation run of final software version](http://youtu.be/NSUf1PLbaTU)
 
+I had to reduce the frequency of the SysTick ISR for the final hardware system to make the game proceed at a playable speed. A video of final hardware system can be seen in the next link.
+[Space Invaders: Embedded System]( http://youtu.be/Pe78Gx01jEQ)
